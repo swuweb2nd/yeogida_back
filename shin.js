@@ -1,3 +1,0 @@
-//shin
-//pushtest
-//pushtest2
