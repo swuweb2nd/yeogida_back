@@ -57,7 +57,7 @@ class User extends sequelize.Model {
     });
   }
 
-  //다른 모델(테이블)과 관계 정의 부분(1:N)
+  //다른 모델(테이블)과 관계 정의 부분 (1:N)
   static associate(db) {
     //회원정보 - 여행일정
     db.User.hasMany(db.여행일정모델명, { foreignKey: '타모델의 외래키', sourceKey: 'user_id' });
