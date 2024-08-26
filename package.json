@@ -11,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "swagger-cli": "^4.0.4",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "swagger-jsdoc": "^6.2.8",
