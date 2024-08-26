@@ -124,3 +124,85 @@ module.exports = router;
  *                type: string
  *                example: "Invalid or expired token"
  */
+
+/**
+ * @swagger
+ * paths:
+ *  /mypage/account:
+ *   put:
+ *    tags:
+ *    - Account
+ *    summary: 개인정보 수정
+ *    description: 사용자가 자신의 개인정보를 수정합니다.
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *      description: Access token
+ *      schema:
+ *        type: string
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              password:
+ *                type: string
+ *                description: 사용자가 수정할 전화번호
+ *                example: "010-1111-1111"
+ *              email:
+ *                type: string
+ *                description: 사용자가 수정할 이메일 주소
+ *                example: "user@example.com"
+ *              nickname:
+ *                type: string
+ *                description: 사용자가 수정할 닉네임
+ *                example: "disagree"
+ *              profilephoto:
+ *                type: string
+ *                description: 사용자가 수정할 프로필 사진 URL 또는 파일 경로
+ *                example: "https://example.com/profile.jpg"
+ *    responses:
+ *     200:
+ *      description: 개인정보 수정 성공
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: "User information updated successfully"
+ *     400:
+ *      description: 잘못된 요청 (입력 데이터 오류)
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: "Invalid input data"
+ *     401:
+ *      description: 인증 실패 (토큰 만료 또는 유효하지 않은 토큰)
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: "Invalid or expired token"
+ *     500:
+ *      description: 서버 오류
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: "Internal server error"
+ */
