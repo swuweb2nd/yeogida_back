@@ -11,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.3"
   },
   "devDependencies": {
     "swagger-jsdoc": "^6.2.8",
