@@ -62,19 +62,19 @@ class User extends sequelize.Model {
   //다른 모델(테이블)과 관계 정의 부분(1:N)
   static associate(db) {
     //회원정보 - 여행일정
-    db.User.hasMany(db.여행일정모델명, { foreignKey: '타모델의 외래키', sourceKey: 'user_id' });
+    db.User.hasMany(db.Itinerary, { foreignKey: 'iternary_id', sourceKey: 'user_id' });
 
     //회원정보 - 스크랩폴더 
-    db.User.hasMany(db.스크랩폴더모델명, { foreignKey: '타모델의 외래키', sourceKey: 'user_id' });
+    db.User.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'user_id' });
 
     //회원정보 - 친구목록
-    db.User.hasMany(db.친구목록모델명, { foreignKey: '타모델의 외래키', sourceKey: 'user_id' });
+    db.User.hasMany(db.FriendList, { foreignKey: 'friend_id', sourceKey: 'user_id' });
 
-    //회원정보 - 여행공유 알림
-    db.User.hasMany(db.여행공유모델명, { foreignKey: '타모델의 외래키', sourceKey: 'user_id' });
+    //회원정보 - 알림
+    db.User.hasMany(db.Alarm, { foreignKey: 'alarm_id', sourceKey: 'user_id' });
 
     //회원정보 - 댓글
-    db.User.hasMany(db.댓글모델명, { foreignKey: '타모델의 외래키', sourceKey: 'user_id' });
+    db.User.hasMany(db.Comment, { foreignKey: 'comment_id', sourceKey: 'user_id' });
 
     }
 

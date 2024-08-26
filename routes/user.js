@@ -1,6 +1,3 @@
-
-// User 라우터 구현 
-
 const express = require('express');
 const User = require('../models/user');  //models의 user.js와 연결
 
