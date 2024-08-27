@@ -6,5 +6,3 @@ router.post('/account', (req, res) => {
 });
 
 module.exports = router;
-
-
