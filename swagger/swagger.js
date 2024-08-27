@@ -124,7 +124,7 @@ const options = {
             }
         }
     },
-    apis: ["./routes/*.js"],  // 라우트 파일에 작성된 Swagger 주석을 포함
+    apis: ["./routes/*.js", './swagger/*.js'],  // swagger 디렉토리 내의 파일 포함
 };
 
 const specs = swaggerJSDoc(options);

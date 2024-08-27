@@ -11,7 +11,36 @@
  *   get:
  *     tags:
  *       - Itineraries
- *     summary: 전체 여행일정을 조회합니다.
+ *     summary: 전체, 조건별 여행일정을 조회합니다.
+ *     description: 사용자가 접근할 수 있는 모든 여행일정을 조회합니다. 여기에는 사용자가 직접 만든 일정과 타인으로부터 공유받은 일정이 모두 포함됩니다.
+ *     parameters:
+ *       - in: query
+ *         name: user_id
+ *         schema:
+ *           type: integer
+ *         description: 특정 사용자가 만든 일정 또는 공유받은 일정을 필터링
+ *       - in: query
+ *         name: public_private
+ *         schema:
+ *           type: boolean
+ *         description: 공개 여부에 따른 일정 필터링 (true = 공개, false = 비공개)
+ *       - in: query
+ *         name: destination
+ *         schema:
+ *           type: string
+ *         description: 특정 목적지로 필터링
+ *       - in: query
+ *         name: startdate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: 시작 날짜로 필터링 (YYYY-MM-DD)
+ *       - in: query
+ *         name: enddate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: 종료 날짜로 필터링 (YYYY-MM-DD)
  *     responses:
  *       200:
  *         description: 성공
@@ -21,7 +50,18 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Itinerary'
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to retrieve itineraries
  */
+
 
 /**
  * @swagger
