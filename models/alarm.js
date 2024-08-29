@@ -5,6 +5,13 @@ const sequelize = require('sequelize');
 class Alarm extends sequelize.Model {
   static initiate(sequelize) {
     User.init({
+    //식별 아이디
+      alarm_id: {
+        type : sequelize.INTEGER,
+        allowNull: false,
+        primarykey: true,
+        autoIncrement: true,
+      },
     //(여행공유 또는 친구추가를 보낸) 회원 식별 아이디 
       user_id: {
         type: sequelize.STRING(40),
@@ -38,8 +45,8 @@ class Alarm extends sequelize.Model {
     // 알림 - 회원정보
     db.Alarm.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'user_id' });
 
-   // 알림 - 여행일정(itinerary)
-   db.Alarm.belongsTo(db.Itinerary, { foreignKey: 'iternary_id', targetKey: 'itinerary_id' });
+    // 알림 - 여행일정(itinerary)
+    db.Alarm.belongsTo(db.Itinerary, { foreignKey: 'iternary_id', targetKey: 'itinerary_id' });
 
     }
 
