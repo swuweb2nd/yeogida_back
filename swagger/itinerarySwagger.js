@@ -41,6 +41,22 @@
  *           type: string
  *           format: date
  *         description: 종료 날짜로 필터링 (YYYY-MM-DD)
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: 
+ *              -newest
+ *              -oldest
+ *         description: "정렬 기준 newest: 최신순, oldest: 오래된 순"
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: 
+ *              -mine
+ *              -shared
+ *         description: "일정 유형 mine: 내가 만든 일정, shared: 공유받은 일정)"
  *     responses:
  *       200:
  *         description: 성공
@@ -61,6 +77,7 @@
  *                   type: string
  *                   example: Failed to retrieve itineraries
  */
+
 
 
 /**
