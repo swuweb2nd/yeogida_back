@@ -6,7 +6,7 @@ const User = require('../models/user');  //models/user.js와 연결
 exports.login = async (req, res, next) => {
     const {id, password} = req.body;
     try{
-
+        //구현예정
     } catch (error) {
         console.error(error);
         return next(error);
