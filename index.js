@@ -1,5 +1,15 @@
 const express = require('express');
+
+//로그인, 로그아웃 구현을 위한 passport 모듈 연결 - sdh
+const passport = require('passport');
+const passportConfig = require('./passport');
+
 const app = express();
+
+passportConfig(); //패스포트 설정 - sdh
+app.use(passport.initialize()); //미들웨어 : 요청에 passport정보를 심음 - sdh
+app.use(passport.session()); //미들웨어 : req.session에 passport정보를 심음 - sdh
+
 const port = process.env.PORT || 3000;
 
 app.use(express.json()); // 추가된 부분

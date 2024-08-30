@@ -22,7 +22,7 @@
  *          schema:
  *            type: string
  *            properties:
-				id:
+ *				id:
  *                type: string
  *                description: 사용자 아이디
  *                example: yeogida24
