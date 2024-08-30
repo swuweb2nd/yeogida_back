@@ -2,7 +2,8 @@ const express = require('express');
 const passport = require('passport');
 
 const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
-const { signup, login, logout } = require('../controllers/user');
+const { renderLogin, renderSignup } = require('../controlers/user');  //페이지 렌더링 (GET)
+const { signup, login, logout } = require('../controllers/user'); // 기능 (POST)
 
 const router = express.Router();
 
@@ -16,9 +17,10 @@ router.post('/signup', isNotLoggedIn, signup);
 router.post('/logout', isLoggedIn, logout);
 
 // GET /users/login - 로그인 페이지 조회
-router.get('/login', isNotLoggedIn, login)
+router.get('/login', isNotLoggedIn, renderLogin)
 
 // GET /users/signup - 회원가입 페이지 조회
+router.get('/login', isNotLoggedIn, renderSignup)
 
 // POST /users/find/id - 아이디 찾기
 
