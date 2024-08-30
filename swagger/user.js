@@ -2,7 +2,7 @@
 /**
  * @swagger
  * paths:
- *  /users/login/:
+ *  /users/login:
  *   post:
  *    tags:
  *    - User
@@ -223,6 +223,44 @@
  */
 
 //로그아웃
+/**
+ * @swagger
+ * paths:
+ *  /users/logout:
+ *   post:
+ *    tags:
+ *    - User
+ *    summary: 로그아웃 
+ *    description: 사용자가 로그아웃 합니다.
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *      description: Access token
+ *      schema:
+ *        type: string
+ *    responses:
+ *     200:
+ *      description: 로그아웃 성공
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: Verification successful
+ *     400:
+ *      description: 클라이언트 요청 오류
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: Bad Request
+ */
 
 //아이디 찾기
 /**
