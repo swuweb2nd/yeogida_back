@@ -5,8 +5,14 @@ const sequelize = require('sequelize');
 class User extends sequelize.Model {
   static initiate(sequelize) {
     User.init({
-    //식별 아이디는 시퀄라이즈에서 자동생성
-    // . . .
+    //식별 아이디
+      user_id: {
+        type: sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+    
     //이름 
       name: {
         type: sequelize.STRING(40),
