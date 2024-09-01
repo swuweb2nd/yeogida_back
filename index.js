@@ -10,6 +10,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/mypage/account', require('./routes/account'));    //mypage/account로 들어왔을 때 routes의 account 파일로
+app.use('/shared-itineraries', require('./routes/shared-itineraries'));
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
