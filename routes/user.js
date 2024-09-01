@@ -1,38 +1,51 @@
 const express = require('express');
-const User = require('../models/user');  //models의 user.js와 연결
+const passport = require('passport');
+
+const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
+const { renderLogin, renderSignup, renderPw, renderId, renderIdSuccess, renderResetPw } = require('../controlers/user');  //페이지 렌더링 (GET)
+const { signup, login, logout, findpw, findid, resetpw } = require('../controllers/user'); // 기능 (POST)
 
 const router = express.Router();
 
+// POST /users/login - 로그인하기
+router.post('/login', isNotLoggedIn, login); 
 
-router.route('/login')
-//router.route 메서드로 같은 라우트 경로는 하나로 묶는다.
+// POST /users/signup - 회원가입하기
+router.post('/signup', isNotLoggedIn, signup);
 
-// /users/login 으로 GET 요청이 들어올 때
-  .get(async (req, res, next) => {
-    try {
-      const users = await User.findAll();
-      res.json(users);
-    } catch (err) {
-      console.error(err);
-      next(err);
-    }
-  })
-  
-  // /users/login 으로 POST 요청이 들어올 때
-  .post(async (req, res, next) => {
-    try {
-      const user = await User.create({
-        id: req.body.id,
-        password: req.body.password,
-      });
-      console.log(user);
-      res.status(201).json(user);
-    } catch (err) {
-      console.error(err);
-      next(err);
-    }
-  });
+// POST /users/logout - 로그아웃하기
+router.post('/logout', isLoggedIn, logout);
 
-// 기능 추후 구현 예정
+// GET /users/login - 로그인 페이지 조회
+router.get('/login', isNotLoggedIn, renderLogin)
+
+// GET /users/signup - 회원가입 페이지 조회
+router.get('/login', isNotLoggedIn, renderSignup)
+
+// POST /users/find/id - 아이디 찾기
+router.post('/find/id', isNotLoggedIn, findid);
+
+// POST /users/find/pw - 비밀번호 찾기
+router.post('/find/pw', isNotLoggedIn, findpw);
+
+// GET /users/find/id - 아이디찾기 페이지 조회
+router.get('/find/id', isNotLoggedIn, renderId)
+
+// GET /users/find/pw - 비밀번호찾기 페이지 조회
+router.get('/find/pw', isNotLoggedIn, renderPw)
+
+// GET /users/find/id/success - 아이디찾기성공 페이지 조회
+router.get('/find/id/success', isNotLoggedIn, renderIdSuccess)
+
+// POST /users/reset-pw/${token} - 비밀번호 재설정
+router.post('/reset-pw/${token}', isNotLoggedIn, resetpw);
+
+// GET /users/reset-pw/${token} - 비밀번호재설정 페이지 조회
+router.get('/reset-pw/${token}', isNotLoggedIn, renderResetPw)
+
+//회원가입 시 아이디 중복확인
+
+//회원가입 시 이메일 중복확인
+
 
 module.exports = router;
