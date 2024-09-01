@@ -40,7 +40,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Login successful
  *     401:
  *      description: 아이디 또는 비밀번호가 일치하지 않는 경우
  *      content:
@@ -80,7 +80,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Login Page successful
  *     401:
  *      description: 클라이언트 요청 오류
  *      content:
@@ -159,7 +159,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Signup successful
  *     409:
  *      description: 이미 가입된 회원정보인 경우
  *      content:
@@ -209,7 +209,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Signup Page successful
  *     400:
  *      description: 클라이언트 요청 오류
  *      content:
@@ -249,7 +249,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Logout successful
  *     400:
  *      description: 클라이언트 요청 오류
  *      content:
@@ -308,7 +308,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Find Id successful
  *     404:
  *      description: 입력받은 정보 중 하나라도 DB에 없는 경우
  *      content:
@@ -349,7 +349,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Find Id Page successful
  *     400:
  *      description: 입력받은 정보 중 하나라도 DB에 없는 경우
  *      content:
@@ -457,7 +457,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Find Pw successful
  *     404:
  *      description: 입력받은 정보 중 하나라도 DB에 없는 경우
  *      content:
@@ -497,7 +497,7 @@
  *            properties:
  *              message:
  *                type: string
- *                example: Verification successful
+ *                example: Find Pw Page successful
  *     400:
  *      description: 클라이언트 요청 오류
  *      content:
@@ -511,7 +511,67 @@
  */
 
 //비밀번호 재설정 페이지 링크를 메일로 전송하기
-
+/**
+ * @swagger
+ * paths:
+ *  /users/find/pw/mail-send:
+ *   post:
+ *    tags:
+ *    - User
+ *    summary: 메일 전송하기 (PW 재설정 링크 전송)
+ *    description: 비밀번호 재설정 링크를 메일로 전송한다.
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *      description: Access token
+ *      schema:
+ *        type: string
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: string
+ *            properties:
+ *				name:
+ *                type: string
+ *                description: 이름 
+ *                example: 김슈니 
+ *              id:
+ *                type: string
+ *                description: 이메일 
+ *                example: swuni123@gmail.com
+ *              birth:
+ *                type: string
+ *                description: 생년월일 
+ *                example: 2003-01-01 
+ *              phonenumber:
+ *                type: string
+ *                description: 전화번호 
+ *                example: 01020240820
+ *    responses:
+ *     200:
+ *      description: 비밀번호 찾기 성공
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: Find Pw successful
+ *     404:
+ *      description: 입력받은 정보 중 하나라도 DB에 없는 경우
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: 해당하는 회원정보가 없습니다.
+ */
 
 //비밀번호 재설정 페이지 조회
 /**
@@ -554,3 +614,8 @@
  */
 
 //비밀번호 재설정하기 
+
+
+//회원가입 시 아이디 중복확인
+
+//회원가입 시 이메일 중복확인
