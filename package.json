@@ -15,9 +15,14 @@
     "express": "^4.19.2",
     "mysql2": "^3.11.0",
     "nodemon": "^3.1.4",
+<<<<<<< HEAD
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "sequelize": "^6.37.3",
+=======
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2",
+>>>>>>> 9d26a1126e96ce7e1a466d279bde9c9aebc62b45
     "swagger-cli": "^4.0.4",
     "yamljs": "^0.3.0"
   },

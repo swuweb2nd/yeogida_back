@@ -12,7 +12,7 @@ module.exports = () => {
   }, async (id, password, done) => {
     try {
       const exUser = await User.findOne({ where: { id } });
-      if (exUser) {
+      if (exUser) {  //회원정보가 이미 있으면
         const result = await bcrypt.compare(password, exUser.password);
         if (result) {
           done(null, exUser);

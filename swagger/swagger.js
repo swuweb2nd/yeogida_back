@@ -124,10 +124,9 @@ const options = {
             }
         }
     },
-    apis: ["./swagger/*.js"],
-}
+
     apis: ["./routes/*.js", './swagger/*.js'],  // swagger 디렉토리 내의 파일 포함
-};
+}
 
 const specs = swaggerJSDoc(options);
 
