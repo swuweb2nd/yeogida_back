@@ -37,10 +37,8 @@ sequelize.sync({ force: false})
   });
 
 //swagger 설정 관련 코드
-
 // swagger.js 파일에서 가져옴
 const { swaggerUi, specs } = require('./swagger/swagger'); 
 // Swagger UI 경로 설정
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-
 //swagger 설정 코드 끝
