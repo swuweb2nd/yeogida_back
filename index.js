@@ -9,8 +9,24 @@ const passportConfig = require('./passport');
 const app = express();
 
 passportConfig(); //패스포트 설정 - sdh
+
+//cookieParser 설정 (로그인관련) -sdh
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(
+  session({
+    resave:false,
+    saveUninitialized:false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  }),
+);
+
 app.use(passport.initialize()); //미들웨어 : 요청에 passport정보를 심음 - sdh
 app.use(passport.session()); //미들웨어 : req.session에 passport정보를 심음 - sdh
+
 
 const port = process.env.PORT || 3000;
 
@@ -39,6 +55,7 @@ sequelize.sync({ force: false})
 //swagger 설정 관련 코드
 // swagger.js 파일에서 가져옴
 const { swaggerUi, specs } = require('./swagger/swagger'); 
+const cookieParser = require('cookie-parser');
 // Swagger UI 경로 설정
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 //swagger 설정 코드 끝

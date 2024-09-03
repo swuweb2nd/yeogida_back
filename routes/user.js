@@ -2,10 +2,16 @@ const express = require('express');
 const passport = require('passport');
 
 const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
-const { renderLogin, renderSignup, renderPw, renderId, renderIdSuccess, renderResetPw } = require('../controlers/user');  //페이지 렌더링 (GET)
+const { renderLogin, renderSignup, renderPw, renderId, renderIdSuccess, renderResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
 const { signup, login, logout, findpw, findid, resetpw } = require('../controllers/user'); // 기능 (POST)
 
 const router = express.Router();
+
+router.use((req, res, next) => {
+    res.locals.user = req.user; //넌적스에서 user 객체를 통해 사용자 정보에 접근할 수 있다.
+    //팔로잉 여부, 관리자 여부 등의 미들웨어를 만들어 활용할 수 있음. 
+    next();
+});
 
 // POST /users/login - 로그인하기
 router.post('/login', isNotLoggedIn, login); 

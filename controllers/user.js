@@ -3,7 +3,7 @@ const passport = require('passport');
 const User = require('../models/user');  //models/user.js와 연결
 
 //로그인
-exports.login = async (req, res, next) => {
+exports.login = (req, res, next) => {
     passport.authenticate('local', (authError, user, info) => { //로그인요청이 들어오면 local 로그인전략을 수행 
         if (authError) {
             console.error(authError);
@@ -23,9 +23,11 @@ exports.login = async (req, res, next) => {
 };
 
 //로그아웃
-exports.logout = async (req, res, next) => {
-
-};
+exports.logout = (req, res) => {
+    req.logout(() => {
+      res.redirect('/');  //로그아웃하면 여기다 메인페이지로 redirect (여기다 메인페이지 api 넣기)
+    });
+  };
 
 //회원가입
 exports.signup = async (req, res, next) => {
