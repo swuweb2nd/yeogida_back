@@ -8,7 +8,7 @@ const { signup, login, logout, findpw, findid, resetpw } = require('../controlle
 const router = express.Router();
 
 router.use((req, res, next) => {
-    res.locals.user = req.user; //넌적스에서 user 객체를 통해 사용자 정보에 접근할 수 있다.
+    res.locals.user = req.user; //넌적스(템플릿엔진)에서 user 객체를 통해 사용자 정보에 접근할 수 있다.
     //팔로잉 여부, 관리자 여부 등의 미들웨어를 만들어 활용할 수 있음. 
     next();
 });

@@ -12,12 +12,13 @@ exports.login = (req, res, next) => {
         if (!user) {
             return res.redirect(`/?loginError=${info.message}`);
         }
+        //로그인 성공 시 실행부분
         return req.login(user, (loginError) => {
             if(loginError) {
                 console.error(loginError);
                 return next(loginError);
             }
-            return res.redirect('/login');
+            return res.redirect('/'); //로그인 성공 시 메인페이지(api 작성 요망)로 redirect
         });
     })(req, res, next);
 };
