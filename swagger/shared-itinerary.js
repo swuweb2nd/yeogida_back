@@ -12,7 +12,7 @@
  *    - in: query
  *      name: status
  *      required: true
- *      description: 정렬 기준 (현재는 'recent'만 사용)
+ *      description: 정렬 기준
  *      schema:
  *        type: string
  *    responses:
@@ -88,7 +88,7 @@
  *    - in: query
  *      name: status
  *      required: true
- *      description: 정렬 기준 (현재는 'popular'만 사용)
+ *      description: 정렬 기준
  *      schema:
  *        type: string
  *        example: popular
