@@ -5,8 +5,6 @@ const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
 const { renderLogin, renderSignup, renderPw, renderId, renderIdSuccess, renderResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
 const { signup, login, logout, findpw, findid, resetpw } = require('../controllers/user'); // 기능 (POST)
 
-//회원가입 시 이미지 업로드 - multer 패키지로 구현
-
 
 
 const router = express.Router();
@@ -38,7 +36,7 @@ router.post('/find/id', isNotLoggedIn, findid);
 // POST /users/find/pw - 비밀번호 찾기
 router.post('/find/pw', isNotLoggedIn, findpw);
 
-// GET /users/find/id - 아이디찾기 페이지 조회
+// GET /users/find/id - 아이디찾기 페이지 조회 
 router.get('/find/id', isNotLoggedIn, renderId)
 
 // GET /users/find/pw - 비밀번호찾기 페이지 조회
@@ -52,7 +50,6 @@ router.post('/reset-pw/${token}', isNotLoggedIn, resetpw);
 
 // GET /users/reset-pw/${token} - 비밀번호재설정 페이지 조회
 router.get('/reset-pw/${token}', isNotLoggedIn, renderResetPw)
-
 
 
 

@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.use('/mypage/account', require('./routes/account'));    //mypage/account로 들어왔을 때 routes의 account 파일로
+app.use('/mypage', require('./routes/account'));    //mypage로 들어왔을 때 routes의 mypage파일로
 app.use('/shared-itineraries', require('./routes/shared-itineraries'));
 
 app.listen(port, () => {
