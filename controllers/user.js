@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const User = require('../models/user');  //models/user.js와 연결
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 //로그인
 exports.login = (req, res, next) => {
@@ -32,7 +33,7 @@ exports.login = (req, res, next) => {
             // 토큰을 쿠키에 저장
             res.cookie('token', token, {
                 httpOnly: true,  // HTTP에서만 쿠키 보내도록 설정
-                secure: process.env.NODE_ENV === 'development',  // 개발모드 : development, 배포모드 : production
+                secure: process.env.NODE_ENV === 'production',  // 개발모드 : development, 배포모드 : production
                 maxAge: 600000,  // 10분
             });
 
@@ -43,10 +44,10 @@ exports.login = (req, res, next) => {
 };
 
 //로그아웃
-exports.logout = (req, res) => {
+exports.logout = (res) => {
     res.clearCookie('token', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'development',  // 개발모드 
+        secure: process.env.NODE_ENV === 'production',  // 개발모드 
     });
     res.redirect('/');  //로그아웃 성공 -> 메인페이지로 redirect (여기다 메인페이지 api 넣기)
   };
@@ -62,7 +63,7 @@ exports.signup = async (req, res, next) => {
     try{
         const exUser = await User.findOne( {where: {email}}); //email로 기존에 가입한 회원정보가 있는지 확인 (수정가능)
         if(exUser){
-            return res.redirect('/signup?error=exist') // 기존가입한 회원정보가 있으면, 회원가입 페이지로 되돌려보낸다
+            return res.redirect('/signup?error=exist') // 기존가입한 회원정보가 있으면, 에러 처리
         }
         // 비밀번호 암호화
         const hash = await bcrypt.hash(password, 12);
@@ -85,13 +86,13 @@ exports.signup = async (req, res, next) => {
 
 //아이디 찾기
 exports.findid = async (req, res, next) => {
-    const { name, birth, phonenumber } = req.body;
+    const { name, birth, email } = req.body;
     try{
-		    // 중복이없는 phonenumber 로 기존에 가입한 회원정보가 있는지 확인
-        const exUser = await User.findOne( {where: {phonenumber}});  
+		    // 중복이없는 email 로 기존에 가입한 회원정보가 있는지 확인
+        const exUser = await User.findOne( {where: {email}});  
         if (exUser) {      // 회원정보가 이미 있으면
         
-	        // 요청온 birth, phonenumber와 일치하는지 비교
+	        // 요청온 name, birth 와 일치하는지 비교
 	        if (exUser.name == name && exUser.birth == birth){
 		        
 		        // 응답에 id를 담아 보낸다.
@@ -106,7 +107,63 @@ exports.findid = async (req, res, next) => {
     }
 };
 
+// 이메일 전송을 위한 nodemailer 설정
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',  // Gmail을 사용할 경우
+    auth: {
+        user: process.env.EMAIL_USER,  // 이메일 계정
+        pass: process.env.EMAIL_PASS,  // 이메일 계정 비밀번호
+    },
+});
 
+//비밀번호 찾기
+exports.findpw = async (req, res, next) => {
+    const { name, id, birth, email } = req.body;
+    try{
+        // 입력받은 정보가 모두 일치하는 회원이 있는지 확인
+        const exUser = await User.findOne({
+            where: {
+                email,
+                id,
+                name,
+                birth
+            }
+        });
+        if (!exUser) {  // 사용자 정보가 없을 때
+            return res.redirect('/find/pw?error=userNotFound'); // 에러 처리
+        }
+
+        // 일치하는 회원 있으면
+
+        // 비밀번호 재설정 토큰 생성 (JWT 토큰 사용)
+        const token = jwt.sign({ id: exUser.id, email: exUser.email }, process.env.JWT_SECRET, {
+            expiresIn: '10m'  // 토큰 유효기간 10분
+        });
+
+        // 비밀번호 재설정 URL
+        const resetUrl = `http://localhost:3000/reset-pw?token=${token}`;
+
+        // 메일 내용 설정
+        const mailOptions = {
+            from: 'yeogida@gmail.com',  // 발신자 정보
+            to: exUser.email,  // 수신자 이메일
+            subject: '[여기다] 비밀번호 재설정 링크',
+            text: `안녕하세요, ${exUser.name}님. 아래 링크를 클릭하여 비밀번호를 재설정해주세요.\n\n${resetUrl}`,
+            html: `<p>안녕하세요, ${exUser.name}님. 아래 링크를 클릭하여 비밀번호를 재설정해주세요.</p><a href="${resetUrl}">${resetUrl}</a>`
+        };
+
+        // 이메일 전송
+        await transporter.sendMail(mailOptions);
+
+
+        //비밀번호찾기 페이지로 리다이렉트 (프론트에서 모달)
+		return res.redirect('/find/pw');   
+	      
+    } catch (error) {
+        console.error(error);
+        return next(error);
+    }
+};
 
 //페이지 렌더링 관련 라우터
 
