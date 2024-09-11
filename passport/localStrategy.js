@@ -16,6 +16,7 @@ module.exports = () => {
       if (exUser) {  //회원정보가 이미 있으면
         const result = await bcrypt.compare(password, exUser.password);  //비밀번호도 비교
         if (result) {     //비밀번호도 일치하면
+        
           done(null, exUser);    //exUser로 사용자정보를 보내고, 로그인에 성공 
 
         } else {  // 로그인 실패 CASE 1 : 로그인 처리과정에서 비밀번호가 일치하지 않은 경우 
