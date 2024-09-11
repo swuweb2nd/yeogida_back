@@ -45,11 +45,11 @@ router.get('/find/pw', isNotLoggedIn, renderPw)
 // GET /users/find/id/success - 아이디찾기성공 페이지 조회
 router.get('/find/id/success', isNotLoggedIn, renderIdSuccess)
 
-// POST /users/reset-pw/${token} - 비밀번호 재설정
-router.post('/reset-pw/${token}', isNotLoggedIn, resetpw);
+// POST /users/reset-pw?token=${token} - 비밀번호 재설정
+router.post('reset-pw?token=${token}', isNotLoggedIn, resetpw);
 
-// GET /users/reset-pw/${token} - 비밀번호재설정 페이지 조회
-router.get('/reset-pw/${token}', isNotLoggedIn, renderResetPw)
+// GET /users/reset-pw?token=${token} - 비밀번호재설정 페이지 조회
+router.get('reset-pw?token=${token}', isNotLoggedIn, renderResetPw)
 
 
 
