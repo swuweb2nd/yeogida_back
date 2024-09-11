@@ -53,6 +53,12 @@ class User extends sequelize.Model {
         type: sequelize.STRING(40),
         allowNull: false,
       },
+    //프로필사진 (수정은 마이페이지에서 가능)
+      userImage: {
+      type: sequelize.STRING(40),
+      allowNull: true,  
+      //추후 디폴트값을 지정
+      },
     }, {
       sequelize,
       timestamps: false,
