@@ -1,9 +1,9 @@
 const express = require('express');
 const passport = require('passport');
 
-const { isLoggedIn, isNotLoggedIn, verifyToken} = require('../middlewares');
-const { renderLogin, renderSignup, renderPw, renderId, renderIdSuccess, renderResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
-const { signup, login, logout, findpw, findid, resetpw } = require('../controllers/user'); // 기능 (POST)
+const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
+const { renderLogin, renderSignup, renderPw, renderId, renderIdSuccess, renderResetPw, sendVerifyNum } = require('../controllers/user');  //페이지 렌더링 (GET)
+const { signup, login, logout, findpw, findid, resetpw, verifymail, verifyid, verifyphone } = require('../controllers/user'); // 기능 (POST)
 
 
 
@@ -51,6 +51,16 @@ router.post('reset-pw?token=${token}', isNotLoggedIn, resetpw);
 // GET /users/reset-pw?token=${token} - 비밀번호재설정 페이지 조회
 router.get('reset-pw?token=${token}', isNotLoggedIn, renderResetPw)
 
+// GET /users/verify-id - 아이디 중복확인
+router.get('/verify-id', isNotLoggedIn, verifyid);
 
+// GET /users/verify-phone - 전화번호 중복확인
+router.get('/verify-phone', isNotLoggedIn, verifyphone);
+
+// POST /users/send-number - 인증번호 메일로 전송
+router.post('/send-number', isNotLoggedIn, sendnumber);
+
+// POST /users/verify-number - 인증번호 검증
+router.post('/verify-number', isNotLoggedIn, verifynumber);
 
 module.exports = router;
