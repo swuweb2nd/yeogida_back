@@ -45,7 +45,7 @@ exports.login = (req, res, next) => {
 
 //로그아웃
 exports.logout = (res) => {
-    res.clearCookie('token', {
+    res.clearCookie('token', {   //토큰을 삭제하여 로그아웃 구현
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',  // 개발모드 
     });
@@ -97,7 +97,7 @@ exports.findid = async (req, res, next) => {
 		        
 		        // 응답에 id를 담아 보낸다.
 		        res.render('find/id/success', {
-                Findid: name   // 프론트 -> <%= Findid %>
+                Findid: id   // 프론트 -> <%= Findid %>
             });
 	        }
 	      }
@@ -107,12 +107,12 @@ exports.findid = async (req, res, next) => {
     }
 };
 
-// 이메일 전송을 위한 nodemailer 설정
+// 이메일 전송을 위한 transporter (nodemailer) 설정
 const transporter = nodemailer.createTransport({
-    service: 'Gmail',  // Gmail을 사용할 경우
+    service: 'Gmail',  // Gmail을 사용
     auth: {
-        user: process.env.EMAIL_USER,  // 이메일 계정
-        pass: process.env.EMAIL_PASS,  // 이메일 계정 비밀번호
+        user: process.env.EMAIL_USER,  // 이메일 계정 - 추후 생성
+        pass: process.env.EMAIL_PASS,  // 이메일 계정 비밀번호 - 추후 생성
     },
 });
 
@@ -133,7 +133,7 @@ exports.findpw = async (req, res, next) => {
             return res.redirect('/find/pw?error=userNotFound'); // 에러 처리
         }
 
-        // 일치하는 회원 있으면
+        // 일치하는 회원이 있으면
 
         // 비밀번호 재설정 토큰 생성 (JWT 토큰 사용)
         const token = jwt.sign({ id: exUser.id, email: exUser.email }, process.env.JWT_SECRET, {
@@ -141,7 +141,7 @@ exports.findpw = async (req, res, next) => {
         });
 
         // 비밀번호 재설정 URL
-        const resetUrl = `http://localhost:3000/reset-pw?token=${token}`;
+        const resetUrl = `(실제배포도메인)/reset-pw?token=${token}`;
 
         // 메일 내용 설정
         const mailOptions = {
@@ -154,16 +154,119 @@ exports.findpw = async (req, res, next) => {
 
         // 이메일 전송
         await transporter.sendMail(mailOptions);
+        return res.status(200).json({
+            message: '등록된 이메일로 비밀번호 재설정 링크를 보냈습니다.'
+        });
 
 
-        //비밀번호찾기 페이지로 리다이렉트 (프론트에서 모달)
-		return res.redirect('/find/pw');   
+    
 	      
     } catch (error) {
         console.error(error);
         return next(error);
     }
 };
+
+// 인증번호 전송을 위한 랜덤숫자 생성
+function generateRandomCode(n) {
+    let str = '';
+    for (let i = 0; i < n; i++) {
+        str += Math.floor(Math.random() * 10);
+    }
+    return str;
+}
+
+
+// 랜덤인증번호 메일 전송
+exports.sendnumber = async(req, res, next) => {
+    const { email, name } = req.body;  // 요청에서 이메일과 이름을 가져옴
+    code = generateRandomCode(6); // 6자리 랜덤 코드 생성
+    try{
+        const mailOptions = {
+            from: 'yeogida@gmail.com',  // 발신자 정보
+            to: email,  // 수신자 이메일
+            subject: '[여기다] 인증번호 발송',
+            text: `안녕하세요, ${name}님.\n\n인증번호 [${code}]를 입력하세요.`,
+            html: `<p>안녕하세요, ${name}님.<a>인증번호 [${code}]를 입력하세요.</a>`
+        };
+    
+        // 이메일 전송
+        await transporter.sendMail(mailOptions);
+
+        // 이메일 전송 성공 시 응답
+        return res.status(200).json({
+            message: '인증번호가 발송되었습니다. 이메일을 확인해주세요.'
+        });
+        
+    }catch (error) {
+        console.error(error);
+        return next(error);
+    }
+    
+};
+
+// 인증번호 검증
+exports.verifynumber = async (req, res, next) => {
+
+};
+
+
+// 아이디 중복확인
+exports.verifyid = async(req, res, next) => {
+    const { id } = req.body;
+    try{
+		// 입력받은 id 로 기존에 가입한 회원정보가 있는지 확인
+        const exUser = await User.findOne( {where: {id}});  
+
+        if (!exUser) {
+            // 중복되지 않은 경우 - 200 상태 코드와 함께 성공 메시지 반환
+            return res.status(200).json({
+                message: '사용 가능한 아이디입니다.',
+                checkedId: id,
+            });
+        } else {
+            // 중복된 아이디가 있을 경우 - 409 상태 코드와 함께 에러 메시지 반환
+            return res.status(409).json({
+                message: '이미 사용 중인 아이디입니다.',
+                checkedId: id,
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        return next(error);
+    }
+
+};
+
+// 전화번호 중복확인 
+exports.verifyphone = async(req, res, next) => {
+    const { phonenumber } = req.body;
+    try{
+		// 입력받은 id 로 기존에 가입한 회원정보가 있는지 확인
+        const exUser = await User.findOne( {where: {phonenumber}});  
+        
+        if (!exUser) {
+            // 중복되지 않은 경우 - 200 상태 코드와 함께 성공 메시지 반환
+            return res.status(200).json({
+                message: '사용 가능한 전화번호입니다.',
+                checkedId: phonenumber,
+            });
+        } else {
+            // 중복된 아이디가 있을 경우 - 409 상태 코드와 함께 에러 메시지 반환
+            return res.status(409).json({
+                message: '이미 사용 중인 전화번호입니다.',
+                checkedId: phonenumber,
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        return next(error);
+    }
+};
+
+// 비밀번호 재설정
+
+
 
 //페이지 렌더링 관련 라우터
 
