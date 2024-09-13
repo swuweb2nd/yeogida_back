@@ -157,10 +157,7 @@ exports.findpw = async (req, res, next) => {
         return res.status(200).json({
             message: '등록된 이메일로 비밀번호 재설정 링크를 보냈습니다.'
         });
-
-
-    
-	      
+  
     } catch (error) {
         console.error(error);
         return next(error);
@@ -181,17 +178,31 @@ function generateRandomCode(n) {
 exports.sendnumber = async(req, res, next) => {
     const { email, name } = req.body;  // 요청에서 이메일과 이름을 가져옴
     code = generateRandomCode(6); // 6자리 랜덤 코드 생성
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);  // 인증번호 유효기간 설정:5분 후 만료
+
     try{
+        const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
         const mailOptions = {
             from: 'yeogida@gmail.com',  // 발신자 정보
             to: email,  // 수신자 이메일
             subject: '[여기다] 인증번호 발송',
-            text: `안녕하세요, ${name}님.\n\n인증번호 [${code}]를 입력하세요.`,
-            html: `<p>안녕하세요, ${name}님.<a>인증번호 [${code}]를 입력하세요.</a>`
+            text: `안녕하세요, ${name}님. 인증번호 [${code}]를 입력하세요.`,
+            html: `<p>안녕하세요, ${name}님. 인증번호 <strong>[${code}]</strong>를 입력하세요.</p>`
         };
     
         // 이메일 전송
         await transporter.sendMail(mailOptions);
+
+        // Users 테이블에 인증번호와 만료 시간 저장
+        await user.update({
+            verificationCode: code,
+            verificationExpiresAt: expiresAt
+        });
 
         // 이메일 전송 성공 시 응답
         return res.status(200).json({
@@ -207,7 +218,31 @@ exports.sendnumber = async(req, res, next) => {
 
 // 인증번호 검증
 exports.verifynumber = async (req, res, next) => {
+    const { email, code } = req.body;
 
+    try {
+        const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        // 인증번호 및 만료 시간 확인
+        if (user.verificationExpiresAt < new Date()) {
+            return res.status(400).json({ message: '유효 시간이 만료되었습니다. 다시 시도해주세요.' });
+        }
+
+        if (user.verificationCode === code) {
+            // 인증 성공
+            return res.status(200).json({ message: '인증에 성공하였습니다.' });
+        } else {
+            // 인증번호 불일치
+            return res.status(400).json({ message: '인증번호가 일치하지 않습니다.' });
+        }
+    } catch (error) {
+        console.error(error);
+        return next(error);
+    }
 };
 
 
@@ -221,7 +256,7 @@ exports.verifyid = async(req, res, next) => {
         if (!exUser) {
             // 중복되지 않은 경우 - 200 상태 코드와 함께 성공 메시지 반환
             return res.status(200).json({
-                message: '사용 가능한 아이디입니다.',
+                message: '사용할 수 있는 아이디입니다.',
                 checkedId: id,
             });
         } else {
@@ -249,13 +284,13 @@ exports.verifyphone = async(req, res, next) => {
             // 중복되지 않은 경우 - 200 상태 코드와 함께 성공 메시지 반환
             return res.status(200).json({
                 message: '사용 가능한 전화번호입니다.',
-                checkedId: phonenumber,
+                checkedPhone: phonenumber,
             });
         } else {
             // 중복된 아이디가 있을 경우 - 409 상태 코드와 함께 에러 메시지 반환
             return res.status(409).json({
-                message: '이미 사용 중인 전화번호입니다.',
-                checkedId: phonenumber,
+                message: '사용 불가능한 전화번호입니다.',
+                checkedPhone: phonenumber,
             });
         }
     } catch (error) {
@@ -265,7 +300,9 @@ exports.verifyphone = async(req, res, next) => {
 };
 
 // 비밀번호 재설정
+exports.resetpw = async(req, res, next) => {
 
+};
 
 
 //페이지 렌더링 관련 라우터
