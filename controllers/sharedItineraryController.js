@@ -4,24 +4,31 @@ const Comment = require('../models/comment');
 
 // 공유된 일정 목록 조회
 exports.getSharedItineraries = async (req, res) => {
-    const {status} = req.query;
+    const {status, keyword} = req.query; // keyword 추가
     try {
         let itineraries;
+        const whereCondition = { public_private: 0 }; // 공개된 일정만
+
+        // keyword가 있을 경우 제목에서 검색어 필터링 추가
+        if (keyword) {
+            whereCondition.name = { [Op.like]: `%${keyword}%` }; // 일정 제목에서 검색어 찾기
+        }
+
         if (status === 'recent') {
-            //db에서 최신순으로 일정 가져오기
+            // db에서 최신순으로 일정 가져오기
             itineraries = await Itinerary.findAll({
-                where: { public_private: 0 }, //공개된 일정만
-                order: [['createdAt', 'DESC']] //최신순으로 정렬
+                where: whereCondition,
+                order: [['createdAt', 'DESC']] // 최신순으로 정렬
             });
             res.status(200).json({
                 message: "최근 정렬된 여행지 목록을 반환합니다.",
                 data: itineraries
             });
         } else if (status === 'popular') {
-            //db에서 인기순으로 일정 가져오기
+            // db에서 인기순으로 일정 가져오기
             itineraries = await Itinerary.findAll({
-                where: { public_private: 0 }, //공개된 일정만
-                order: [['likes', 'DESC']] //인기순으로 정렬
+                where: whereCondition,
+                order: [['likes', 'DESC']] // 인기순으로 정렬
             });
             res.status(200).json({
                 message: "인기 정렬된 여행지 목록을 반환합니다.",
@@ -36,6 +43,8 @@ exports.getSharedItineraries = async (req, res) => {
         res.status(500).json({message: "목록 조회에 실패했습니다.", error: error.message});
     }
 };
+
+
 
 // 공유 일정 상세 조회
 exports.getSharedItineraryById = async (req, res) => {
