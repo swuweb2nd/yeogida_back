@@ -1,4 +1,4 @@
-//공유 일정 목록  조회(최신순)
+// 공유 일정 목록 조회(최신순)
 /**
  * @swagger
  * paths:
@@ -7,12 +7,19 @@
  *    tags:
  *    - Itineraries
  *    summary: 최근 정렬된 공유 여행지 목록 조회
- *    description: 주어진 정렬 기준에 따라 공유된 여행지 목록을 반환합니다. status=recent일 경우 최신 순으로 정렬됩니다.
+ *    description: 주어진 정렬 기준에 따라 공유된 여행지 목록을 반환합니다. status=recent일 경우 최신 순으로 정렬됩니다. keyword 파라미터를 이용해 검색어 필터링이 가능합니다.
  *    parameters:
  *    - in: query
  *      name: status
  *      required: true
- *      description: 정렬 기준 (현재는 'recent'만 사용)
+ *      description: 정렬 기준
+ *      schema:
+ *        type: string
+ *        example: recent
+ *    - in: query
+ *      name: keyword
+ *      required: false
+ *      description: 게시글 제목에 포함된 검색어
  *      schema:
  *        type: string
  *    responses:
@@ -74,7 +81,7 @@
  */
 
 
-//공유 일정 목록 조회(인기순)
+// 공유 일정 목록 조회(인기순)
 /**
  * @swagger
  * paths:
@@ -83,15 +90,21 @@
  *    tags:
  *    - Itineraries
  *    summary: 인기 정렬된 공유 여행지 목록 조회
- *    description: 주어진 정렬 기준에 따라 공유된 여행지 목록을 반환합니다. status=popular일 경우 인기 순으로 정렬됩니다.
+ *    description: 주어진 정렬 기준에 따라 공유된 여행지 목록을 반환합니다. status=popular일 경우 인기 순으로 정렬됩니다. keyword 파라미터를 이용해 검색어 필터링이 가능합니다.
  *    parameters:
  *    - in: query
  *      name: status
  *      required: true
- *      description: 정렬 기준 (현재는 'popular'만 사용)
+ *      description: 정렬 기준
  *      schema:
  *        type: string
  *        example: popular
+ *    - in: query
+ *      name: keyword
+ *      required: false
+ *      description: 게시글 제목에 포함된 검색어
+ *      schema:
+ *        type: string
  *    responses:
  *     200:
  *      description: 정렬된 여행지 목록을 반환합니다.
@@ -152,6 +165,7 @@
  *                type: string
  *                example: "게시글을 찾을 수 없습니다."
  */
+
 
 
 //공유 일정 상세 조회(DAY1포함)
