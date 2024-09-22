@@ -4,40 +4,39 @@ const { sequelize } = require('./models');
 
 //로그인, 로그아웃 구현을 위한 passport 모듈 연결 - sdh
 const passport = require('passport');
-const passportConfig = require('./passport');
+//const passportConfig = require('./passport');
+const cookieParser = require('cookie-parser');
+
+//만료된 인증번호 삭제 배치작업 추가 -sdh
+const deleteExpiredCodes = require('./cron/deleteExpiredCodes')
+
+//서버 초기화 시 cron 작업 실행 -sdh
+deleteExpiredCodes.start();
 
 const app = express();
 
-passportConfig(); //패스포트 설정 - sdh
+//passportConfig(); //패스포트 설정 - sdh
 
-//cookieParser 설정 (로그인관련) -sdh
-app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(
-  session({
-    resave:false,
-    saveUninitialized:false,
-    secret: process.env.COOKIE_SECRET,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
-  }),
-);
 
-app.use(passport.initialize()); //미들웨어 : 요청에 passport정보를 심음 - sdh
-app.use(passport.session()); //미들웨어 : req.session에 passport정보를 심음 - sdh
+// passport 초기화 
+app.use(passport.initialize());
 
 
 const port = process.env.PORT || 3000;
 
+
+//미들웨어설정 
 app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());  // 쿠키설정
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.use('/mypage/account', require('./routes/account'));    //mypage/account로 들어왔을 때 routes의 account 파일로
+
+app.use('/users', require('./routes/user'));
+app.use('/mypage', require('./routes/account'));    //mypage로 들어왔을 때 routes의 mypage파일로
 app.use('/shared-itineraries', require('./routes/shared-itineraries'));
 
 app.listen(port, () => {
