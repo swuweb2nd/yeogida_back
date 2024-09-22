@@ -45,6 +45,12 @@ sequelize.sync({ force: false})
     console.error(err);
   });
 
+
+
+// 메인 페이지 라우트 추가
+const mainPageRoutes = require('./routes/mainPageRoutes');
+app.use('/api', mainPageRoutes);
+
 //swagger 설정 관련 코드
 // swagger.js 파일에서 가져옴
 const { swaggerUi, specs } = require('./swagger/swagger'); 
