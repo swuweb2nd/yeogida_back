@@ -1,13 +1,11 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../config/config.json');
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
 
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+//const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-db.sequelize = sequelize;
 
 const Sharer = require('./Sharer');
 const Itinerary = require('./Itinerary');
@@ -28,5 +26,6 @@ const db = {
     Sharer
 };
 
+db.sequelize = sequelize;
 
 module.exports = db;
