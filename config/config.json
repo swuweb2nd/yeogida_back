@@ -4,7 +4,11 @@
     "password": null,
     "database": "yeogida",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define": {
+      "timestamps": false,  
+      "freezeTableName": true
+    }
   },
   "test": {
     "username": "root",

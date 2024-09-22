@@ -7,12 +7,6 @@ const passport = require('passport');
 //const passportConfig = require('./passport');
 const cookieParser = require('cookie-parser');
 
-//만료된 인증번호 삭제 배치작업 추가 -sdh
-const deleteExpiredCodes = require('./cron/deleteExpiredCodes')
-
-//서버 초기화 시 cron 작업 실행 -sdh
-deleteExpiredCodes.start();
-
 const app = express();
 
 //passportConfig(); //패스포트 설정 - sdh
@@ -22,7 +16,7 @@ const app = express();
 app.use(passport.initialize());
 
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 
 //미들웨어설정 
@@ -30,11 +24,10 @@ app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());  // 쿠키설정
 
-
-
 app.get('/', (req, res) => {
-  res.send("yeogida 서버 연결 되었습니다.");
+  res.send('Hello World!');
 });
+
 
 app.use('/users', require('./routes/user'));
 app.use('/mypage', require('./routes/account'));    //mypage로 들어왔을 때 routes의 mypage파일로
