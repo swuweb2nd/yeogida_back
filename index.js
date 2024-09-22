@@ -30,10 +30,11 @@ app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());  // 쿠키설정
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
 
+
+app.get('/', (req, res) => {
+  res.send("yeogida 서버 연결 되었습니다.");
+});
 
 app.use('/users', require('./routes/user'));
 app.use('/mypage', require('./routes/account'));    //mypage로 들어왔을 때 routes의 mypage파일로
