@@ -13,22 +13,22 @@ router.get('/account', fetchInfo);
 //PUT 요청으로 개인정보 수정
 router.put('/account', editaccount);
 
-//
+//친구 목록 조회(최신순)
 router.get('/friend?status=recent',);
 
-//
+//친구 목록 조회(이름순)
 router.get('/friend?status=name',);
 
-//
+//친구 삭제
 router.delete('/friend/{friendId}',);
 
-//
+//친구요청 목록 조회
 router.get('/friend/friendrequest',);
 
-//
+//친구 요청 승낙
 router.post('/friend/friendrequest/accept',);
 
-//
+//친구 요청 거절
 router.post('/friend/friendrequest/reject',);
 
 //친구 검색

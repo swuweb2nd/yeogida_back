@@ -3,6 +3,7 @@ const passport = require('passport');
 const User = require('../models/user');  //models/user.js와 연결
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const { verifyToken } = require('../middlewares'); // 토큰검증 미들웨어 가져오기
 
 //로그인
 exports.login = (req, res, next) => {
@@ -33,8 +34,8 @@ exports.login = (req, res, next) => {
             // 토큰을 쿠키에 저장
             res.cookie('token', token, {
                 httpOnly: true,  // HTTP에서만 쿠키 보내도록 설정
-                secure: process.env.NODE_ENV === 'production',  // 개발모드 : development, 배포모드 : production
-                maxAge: 600000,  // 10분
+                secure: process.env.NODE_ENV === 'production',  // 배포모드일 때만 HTTP에서 쿠키가 전송되도록
+                maxAge: 600000,  // 10분(토큰 유효기간과 일관성 유지)
             });
 
             // 메인페이지로 리다이렉트
@@ -47,14 +48,14 @@ exports.login = (req, res, next) => {
 exports.logout = (res) => {
     res.clearCookie('token', {   //토큰을 삭제하여 로그아웃 구현
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',  // 개발모드 
+        secure: process.env.NODE_ENV === 'production',  // 배포모드
     });
-    res.redirect('/');  //로그아웃 성공 -> 메인페이지로 redirect (여기다 메인페이지 api 넣기)
+    res.redirect('/');  //로그아웃 성공 -> 메인페이지로 redirect
   };
 
 //회원가입
 exports.signup = async (req, res, next) => {
-    const { id, password, name, email, phonenumber, birth } = req.body;
+    const { id, password, passwordCheck, name, email, phonenumber, birth } = req.body;
     
     // 비밀번호와 비밀번호 확인이 일치하는지 검사
     if (password !== passwordCheck) {
@@ -130,7 +131,7 @@ exports.findpw = async (req, res, next) => {
             }
         });
         if (!exUser) {  // 사용자 정보가 없을 때
-            return res.redirect('/find/pw?error=userNotFound'); // 에러 처리
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
         }
 
         // 일치하는 회원이 있으면
@@ -178,7 +179,8 @@ function generateRandomCode(n) {
 exports.sendnumber = async(req, res, next) => {
     const { email, name } = req.body;  // 요청에서 이메일과 이름을 가져옴
     code = generateRandomCode(6); // 6자리 랜덤 코드 생성
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);  // 인증번호 유효기간 설정:5분 후 만료
+    const expiresAt = new Date(Date.now() + 3 * 60 * 1000);  // 인증번호 유효기간 설정: 3분 후 만료
+
 
     try{
         const user = await User.findOne({ where: { email } });
@@ -301,7 +303,41 @@ exports.verifyphone = async(req, res, next) => {
 
 // 비밀번호 재설정
 exports.resetpw = async(req, res, next) => {
+    const { newPassword, newPasswordCheck } = req.body;
 
+    // 비밀번호와 비밀번호 확인이 일치하는지 검사
+    if (newPassword !== newPasswordCheck) {
+        return res.status(400).json({message : '비밀번호가 서로 일치하지 않습니다. 다시 입력하세요.'});
+    }
+    try {
+        // 미들웨어에서 검증된 토큰 데이터 가져오기
+        const decoded = res.locals.decoded;
+
+        // 토큰에서 유저 정보 추출
+        const exUser = await User.findOne({ where: { id: decoded.id, email: decoded.email } });
+
+        if (!exUser) {  // 사용자가 존재하지 않음
+            return res.status(404).json({ message: '잘못된 사용자 정보입니다.' });
+        }
+
+        // 기존 비밀번호와 동일한지 확인
+        const isSamePassword = await bcrypt.compare(newPassword, exUser.password);
+        if (isSamePassword) {
+            return res.status(400).json({ message: '새 비밀번호가 기존 비밀번호와 동일합니다. 다른 비밀번호를 입력하세요.' });
+        }
+
+        // 새 비밀번호 해시화
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+        // 사용자 비밀번호 업데이트
+        await User.update({ password: hashedPassword }, { where: { id: exUser.id } });
+
+        return res.status(200).json({ message: '비밀번호가 성공적으로 변경되었습니다.' });
+
+    } catch (error) {
+        console.error(error);
+        return next(error);
+    }
 };
 
 
@@ -324,7 +360,9 @@ exports.renderId = (req, res) => {
 };
 
 exports.renderIdSuccess = (req, res) => {
-	res.render('find/id/success');
+    const { foundId } = req.query;
+
+	res.sendFile('find/id/success');
 };
 
 exports.renderResetPw = (req, res) => {

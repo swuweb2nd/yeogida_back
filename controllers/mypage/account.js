@@ -72,3 +72,55 @@ exports.fetchInfo = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+
+// 사용자 정보 수정
+exports.editAccount = async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "You need to log in to access this resource." });
+    }
+
+    const userId = req.user.id;  // passport에서 제공하는 사용자 정보
+    const { password, email, nickname, profileImg } = req.body;
+
+    try {
+        // DB에서 사용자 정보 가져오기
+        const user = await User.findOne({ where: { user_id: userId } });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // 새 비밀번호가 있으면 해시화 처리
+        let updatedPassword = user.password;
+        if (password) {
+            updatedPassword = await bcrypt.hash(password, 10);  // 비밀번호를 해시화
+        }
+
+        // 사용자 정보 업데이트
+        await User.update(
+            {
+                password: updatedPassword,
+                email: email || user.email,
+                nickname: nickname || user.nickname,
+                profileImg: profileImg || user.profileImg
+            },
+            { where: { user_id: userId } }
+        );
+
+        // 업데이트 성공
+        res.status(200).json({
+            message: "Account information updated successfully",
+            data: {
+                id: user.user_id,
+                email: email || user.email,
+                nickname: nickname || user.nickname,
+                profileImg: profileImg || user.profileImg
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+

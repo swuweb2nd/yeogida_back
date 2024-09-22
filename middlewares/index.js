@@ -22,7 +22,7 @@ exports.verifyToken = (req, res, next) => {
 
 
 
-//f 로그인 상태 관련 미들웨어
+// 로그인 상태 관련 미들웨어
 exports.isLoggedIn = (req, res, next) => {
     if (req.isAuthenticated()) {
         next();

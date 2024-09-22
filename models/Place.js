@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');  // 적절한 경로로 수정
-const Itinerary = require('./Itinerary');  // Itinerary 모델 import
+const Itinerary = require('../Itinerary');  // Itinerary 모델 import
 
 class Place extends Model {}
 

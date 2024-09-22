@@ -7,12 +7,6 @@ const passport = require('passport');
 //const passportConfig = require('./passport');
 const cookieParser = require('cookie-parser');
 
-//만료된 인증번호 삭제 배치작업 추가 -sdh
-const deleteExpiredCodes = require('./cron/deleteExpiredCodes')
-
-//서버 초기화 시 cron 작업 실행 -sdh
-deleteExpiredCodes.start();
-
 const app = express();
 
 //passportConfig(); //패스포트 설정 - sdh
