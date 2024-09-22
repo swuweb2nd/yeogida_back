@@ -1,11 +1,11 @@
 const Sequelize = require('sequelize');
+const sequelize = require('../config/config.json');
+
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
 
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+//const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-db.sequelize = sequelize;
 
 const Sharer = require('./Sharer');
 const Itinerary = require('./Itinerary');
@@ -19,9 +19,14 @@ Itinerary.hasMany(Sharer, { foreignKey: 'itinerary_id', onDelete: 'CASCADE' });
 Sharer.belongsTo(Itinerary, { foreignKey: 'itinerary_id' });
 
 // 모델들을 내보내기
-db.Sequelize = Sequelize;
-db.Itinerary = Itinerary;
-db.Place = Place;
-db.Sharer = Sharer;
+const db = {
+    Sequelize,
+    sequelize,
+    Itinerary,
+    Place,
+    Sharer
+};
+
+db.sequelize = sequelize;
 
 module.exports = db;
