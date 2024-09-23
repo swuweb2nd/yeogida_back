@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize');
-
+//const Sequelize = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');//9/23 11:44 고은수 수정
 
 class Scrap extends Sequelize.Model {
   static initiate(sequelize) {

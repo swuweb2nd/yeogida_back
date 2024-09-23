@@ -1,67 +1,67 @@
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
-//회원정보 모델
-
-class User extends sequelize.Model {
+// 회원정보 모델
+class User extends Sequelize.Model {
   static initiate(sequelize) {
     User.init({
-    //식별 아이디
+      // 식별 아이디
       user_id: {
-        type: sequelize.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
-    
-    //이름 
+      // 이름
       name: {
-        type: sequelize.STRING(40),
+        type: Sequelize.STRING(40),
         allowNull: false,
       },
-    //이메일
+      // 이메일
       email: {
-        type: sequelize.STRING(40),
+        type: Sequelize.STRING(40),
         allowNull: false,
+        unique: true,  // 이메일은 보통 고유 값으로 설정
       },
-    //전화번호
+      // 전화번호
       phonenumber: {
-        type: sequelize.STRING(40),
+        type: Sequelize.STRING(40),
         allowNull: false,
       },
-    //생년월일
+      // 생년월일
       birth: {
-        type: sequelize.DATE,
+        type: Sequelize.DATE,
         allowNull: true,
       },
-    //회원 아이디
+      // 회원 아이디
       id: {
-        type: sequelize.STRING(16),
+        type: Sequelize.STRING(16),
         allowNull: false,
+        unique: true,  // 회원 아이디도 고유 값으로 설정
       },
-    //비밀번호
+      // 비밀번호
       password: {
-        type : sequelize.STRING(40),
+        type: Sequelize.STRING(40),
         allowNull: false,
       },
-    //닉네임
+      // 닉네임
       nickname: {
-        type: sequelize.STRING(40),
+        type: Sequelize.STRING(40),
         allowNull: false,
       },
-    //프로필사진 (수정은 마이페이지에서 가능, 추후 디폴트값 설정)
+      // 프로필 사진
       userImage: {
-        type: sequelize.STRING(40),
-        allowNull: true,  
+        type: Sequelize.STRING(255),  // 사진 URL의 경우 길이가 더 길 수 있으므로
+        allowNull: true,
       },
-    //인증번호
+      // 인증번호
       verificationCode: {
-        type: sequelize.STRING(10),
-        allowNull: true,  
+        type: Sequelize.STRING(10),
+        allowNull: true,
       },
-    //인증번호 만료시간
+      // 인증번호 만료시간
       verificationExpiresAt: {
-        type: sequelize.timestamps,
-        allowNull: true,  
+        type: Sequelize.DATE,  // sequelize.timestamps가 아닌 DATE 타입 사용
+        allowNull: true,
       },
     }, {
       sequelize,
@@ -75,25 +75,23 @@ class User extends sequelize.Model {
     });
   }
 
-  //다른 모델(테이블)과 관계 정의 부분(1:N)
+  // 다른 모델(테이블)과 관계 정의 부분(1:N)
   static associate(db) {
-    //회원정보 - 여행일정
-    db.User.hasMany(db.Itinerary, { foreignKey: 'iternary_id', sourceKey: 'user_id' });
+    // 회원정보 - 여행일정
+    db.User.hasMany(db.Itinerary, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
-    //회원정보 - 스크랩폴더 
-    db.User.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'user_id' });
+    // 회원정보 - 스크랩폴더
+    db.User.hasMany(db.ScrapFolder, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
-    //회원정보 - 친구목록
-    db.User.hasMany(db.FriendList, { foreignKey: 'friend_id', sourceKey: 'user_id' });
+    // 회원정보 - 친구목록
+    db.User.hasMany(db.FriendList, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
-    //회원정보 - 알림
-    db.User.hasMany(db.Alarm, { foreignKey: 'alarm_id', sourceKey: 'user_id' });
+    // 회원정보 - 알림
+    db.User.hasMany(db.Alarm, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
-    //회원정보 - 댓글
-    db.User.hasMany(db.Comment, { foreignKey: 'comment_id', sourceKey: 'user_id' });
-
-    }
-
-};
+    // 회원정보 - 댓글
+    db.User.hasMany(db.Comment, { foreignKey: 'user_id', sourceKey: 'user_id' });
+  }
+}
 
 module.exports = User;

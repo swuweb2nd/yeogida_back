@@ -1,56 +1,36 @@
-const Sequelize = require('sequelize');  //sequelize 모듈 불러오기
+const Sequelize = require('sequelize');
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 
-const ScrapFolder = require('./scrapfolder');
-const Scrap = require('./scrap');
-const FriendList = require('./friendList');
-
-//db 객체 생성
 const db = {};
-const sequelize = new Sequelize(
-    //원래는 일일이 데이터베이스 정보를 적어주어야 하지만, config에 정보를 저장해주었기 때문에 이렇게 작성 가능.
-    config.database,
-    config.username, 
-    config.password, 
-    config
-);
+const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-
-
-// 모델 정의
+// 모델 불러오기
 db.Itinerary = require('./Itinerary');
 db.Sharer = require('./Sharer');
 db.Place = require('./Place');
-//db.User = require('./User');  // 필요한 모델 추가
-//db.FriendList = require('./FriendList');  // 필요한 모델 추가
+db.FriendList = require('./friendList');
+db.ScrapFolder = require('./scrapfolder');
+db.Scrap = require('./scrap');
+db.User = require('./user');  
+db.Comment = require('./comment');
+db.Alarm = require('./alarm')
 
 // 모델 초기화
-db.Itinerary.initiate(sequelize);
-db.Sharer.initiate(sequelize);
-db.Place.initiate(sequelize);
-//db.User.initiate(sequelize);
-//db.FriendList.initiate(sequelize);
-
-// 관계 설정은 모든 모델을 초기화한 후에 해야 합니다.
 Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);  // 관계 설정
+  if (db[modelName].initiate) {
+    db[modelName].initiate(sequelize);
   }
 });
 
+// 모델 초기화 후 연관 관계 설정
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+// Sequelize 인스턴스를 db 객체에 추가
 db.sequelize = sequelize;
-//db라는 객체에 ScrapFolder, Scrap, FriendList 담아두기
-db.ScrapFolder = ScrapFolder;
-db.Scrap = Scrap;
-db.FriendList = FriendList;
-
-Scrap.initiate(sequelize);
-ScrapFolder.initiate(sequelize);
-FriendList.initiate(sequelize);
-
-Scrap.associate(db);
-ScrapFolder.associate(db);
-FriendList.associate(db);
 
 module.exports = db;

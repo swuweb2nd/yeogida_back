@@ -21,7 +21,7 @@ class Sharer extends Sequelize.Model {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'Users',
+                    model: 'User',
                     key: 'user_id',
                 },
             },
@@ -29,7 +29,7 @@ class Sharer extends Sequelize.Model {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'Users',
+                    model: 'User',
                     key: 'user_id',
                 },
             },
@@ -50,8 +50,8 @@ class Sharer extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Sharer.belongsTo(db.Users, { foreignKey: 'sharer_id' });
-        db.Sharer.belongsTo(db.Users, { foreignKey: 'friend_id' });
+        db.Sharer.belongsTo(db.User, { foreignKey: 'sharer_id' });
+        db.Sharer.belongsTo(db.User, { foreignKey: 'friend_id' });
         db.Sharer.belongsTo(db.Itinerary, { foreignKey: 'itinerary_id' });
     }
 }
