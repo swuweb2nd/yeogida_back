@@ -51,10 +51,13 @@ class FriendList extends Sequelize.Model {
   }
 
   static associate(db) {
-    // 다른 모델과의 관계를 정의하는 부분 (필요 시 추가)
-    db.FriendList.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'user_id' });
-    db.FriendList.belongsTo(db.User, { foreignKey: 'friend_user_id', targetKey: 'user_id' });
-  }
+ // 친구 요청을 보낸 사용자 (user_id)와의 관계 설정
+ db.FriendList.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'user_id' });
+
+ // 친구 요청을 받은 사용자 (friend_user_id)와의 관계 설정
+ db.FriendList.belongsTo(db.User, { foreignKey: 'friend_user_id', targetKey: 'user_id' });
+
+}
 }
 
 module.exports = FriendList;
