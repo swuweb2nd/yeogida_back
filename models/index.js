@@ -1,10 +1,22 @@
-const Sequelize = require('sequelize');
+const Sequelize = require('sequelize');  //sequelize 모듈 불러오기
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const ScrapFolder = require('./scrapfolder');
+const Scrap = require('./scrap');
+const FriendList = require('./friendList');
 
+//db 객체 생성
 const db = {};
+const sequelize = new Sequelize(
+    //원래는 일일이 데이터베이스 정보를 적어주어야 하지만, config에 정보를 저장해주었기 때문에 이렇게 작성 가능.
+    config.database,
+    config.username, 
+    config.password, 
+    config
+);
+
+
 
 // 모델 정의
 db.Itinerary = require('./Itinerary');
@@ -28,6 +40,17 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+//db라는 객체에 ScrapFolder, Scrap, FriendList 담아두기
+db.ScrapFolder = ScrapFolder;
+db.Scrap = Scrap;
+db.FriendList = FriendList;
+
+Scrap.initiate(sequelize);
+ScrapFolder.initiate(sequelize);
+FriendList.initiate(sequelize);
+
+Scrap.associate(db);
+ScrapFolder.associate(db);
+FriendList.associate(db);
 
 module.exports = db;
