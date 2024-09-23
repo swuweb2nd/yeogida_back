@@ -65,7 +65,7 @@ class User extends Sequelize.Model {
       },
     }, {
       sequelize,
-      timestamps: false,
+      timestamps: true, // createdAt, updatedAt 필드를 자동 생성
       underscored: false,
       modelName: 'User',
       tableName: 'users',
