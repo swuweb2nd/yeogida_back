@@ -24,14 +24,16 @@ const sequelize = new Sequelize(
 db.Itinerary = require('./Itinerary');
 db.Place = require('./Place');
 
-//db.User = require('./User');  // 필요한 모델 추가
+db.User = require('./user');
+db.Alarm = require('./alarm');  
 //db.FriendList = require('./FriendList');  // 필요한 모델 추가
 
 // 모델 초기화
 db.Itinerary.initiate(sequelize);
 db.Place.initiate(sequelize);
 
-//db.User.initiate(sequelize);
+db.User.initiate(sequelize);
+db.Alarm.initiate(sequelize);
 //db.FriendList.initiate(sequelize);
 
 

@@ -60,12 +60,12 @@ class User extends sequelize.Model {
       },
     //인증번호 만료시간
       verificationExpiresAt: {
-        type: sequelize.timestamps,
+        type: sequelize.DATE,
         allowNull: true,  
       },
     }, {
       sequelize,
-      timestamps: false,
+      timestamps: true, // createdAt, updatedAt 필드를 자동 생성
       underscored: false,
       modelName: 'User',
       tableName: 'users',
