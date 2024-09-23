@@ -1,5 +1,5 @@
-import express from 'express';
-import {sharedItinerary} from '../controllers/sharedItineraryController';
+const express = require('express');
+const sharedItinerary = require('../controllers/sharedItineraryController');
 
 const sharedItineraryRoutes = express.Router();
 

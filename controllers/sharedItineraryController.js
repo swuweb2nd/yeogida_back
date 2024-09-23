@@ -28,7 +28,7 @@ exports.getSharedItineraries = async (req, res) => {
             // db에서 인기순으로 일정 가져오기
             itineraries = await Itinerary.findAll({
                 where: whereCondition,
-                order: [['likes', 'DESC']] // 인기순으로 정렬
+                order: [['likenumber', 'DESC']] // 인기순으로 정렬
             });
             res.status(200).json({
                 message: "인기 정렬된 여행지 목록을 반환합니다.",
@@ -132,29 +132,48 @@ exports.deleteComment = async (req, res) => {
 
 // 좋아요 추가
 exports.addLike = async (req, res) => {
-    const {shared_itineraries_id} = req.params;
+    const { shared_itineraries_id } = req.params;
     try {
-        await Like.create({ sharedItineraryId: shared_itineraries_id});
-        res.status(201).json({
-            message: `ID가 ${shared_itineraries_id}인 공유 일정 게시글에 좋아요를 추가합니다.`,
-        });
+        const itinerary = await Itinerary.findByPk(shared_itineraries_id);
+        if (itinerary) {
+            itinerary.likenumber += 1; // 좋아요 수 증가
+            await itinerary.save(); // 변경사항 저장
+            res.status(201).json({
+                message: `ID가 ${shared_itineraries_id}인 공유 일정 게시글에 좋아요를 추가합니다.`,
+                data: itinerary // 업데이트된 데이터 반환
+            });
+        } else {
+            res.status(404).json({
+                message: "해당 일정을 찾을 수 없습니다."
+            });
+        }
     } catch (error) {
-        res.status(500).json({ message: "좋아요 추가에 실패했습니다.", error: error.message});
+        res.status(500).json({ message: "좋아요 추가에 실패했습니다.", error: error.message });
     }
 };
 
 // 좋아요 취소
 exports.removeLike = async (req, res) => {
-    const {shared_itineraries_id} = req.params;
+    const { shared_itineraries_id } = req.params;
     try {
-        await Like.destroy({ where: {sharedItineraryId: shared_itineraries_id}});
-        res.status(200).json({
-            message: `ID가 ${shared_itineraries_id}인 공유 일정 게시글에 대한 좋아요를 취소합니다.`,
-        });
+        const itinerary = await Itinerary.findByPk(shared_itineraries_id);
+        if (itinerary) {
+            itinerary.likenumber = Math.max(0, itinerary.likenumber - 1); // 좋아요 수 감소
+            await itinerary.save(); // 변경사항 저장
+            res.status(200).json({
+                message: `ID가 ${shared_itineraries_id}인 공유 일정 게시글에 대한 좋아요를 취소합니다.`,
+                data: itinerary // 업데이트된 데이터 반환
+            });
+        } else {
+            res.status(404).json({
+                message: "해당 일정을 찾을 수 없습니다."
+            });
+        }
     } catch (error) {
-        res.status(500).json({ message: "좋아요 취소에 실패했습니다.", error: error.message});
+        res.status(500).json({ message: "좋아요 취소에 실패했습니다.", error: error.message });
     }
 };
+
 
 // 스크랩 추가
 exports.addScrap = async (req, res) => {
