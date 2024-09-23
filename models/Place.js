@@ -68,7 +68,7 @@ class Place extends Sequelize.Model {
 
     static associate(db) {
         db.Place.belongsTo(db.Itinerary, { foreignKey: 'itinerary_id', onDelete: 'CASCADE' });
-        db.Itinerary.hasMany(db.Place, { foreignKey: 'itinerary_id', onDelete: 'CASCADE' });
+        //db.Itinerary.hasMany(db.Place, { foreignKey: 'itinerary_id', onDelete: 'CASCADE' });
     }
 }
 

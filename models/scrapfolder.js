@@ -39,7 +39,11 @@ class ScrapFolder extends Sequelize.Model{
     });
   }
 
-  static associate(db){}
+  static associate(db){
+    db.ScrapFolder.belongsTo(db.User, {foreinKey: 'scrapfolder_id', targetKey:'user_id'});
+    db.ScrapFolder.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'scrapfolder_id' });
+
+  }
 };
 
 

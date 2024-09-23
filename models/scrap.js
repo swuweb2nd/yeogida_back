@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 
-
 class Scrap extends Sequelize.Model {
   static initiate(sequelize) {
     Scrap.init({
