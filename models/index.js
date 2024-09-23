@@ -19,7 +19,6 @@ const sequelize = new Sequelize(
 );
 
 
-
 // 모델 정의
 db.Itinerary = require('./Itinerary');
 db.Place = require('./Place');
@@ -39,11 +38,11 @@ db.Alarm.initiate(sequelize);
 
 
 // 관계 설정은 모든 모델을 초기화한 후에 해야 합니다.
-Object.keys(db).forEach(modelName => {
+/*Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);  // 관계 설정
   }
-});
+});*/
 
 db.sequelize = sequelize;
 //db라는 객체에 ScrapFolder, Scrap, FriendList 담아두기
@@ -58,6 +57,10 @@ ScrapFolder.initiate(sequelize);
 FriendList.initiate(sequelize);
 User.initiate(sequelize);
 Sharer.initiate(sequelize);
+
+db.Itinerary.associate(db);
+db.Sharer.associate(db);
+db.Place.associate(db);
 
 Scrap.associate(db);
 ScrapFolder.associate(db);
