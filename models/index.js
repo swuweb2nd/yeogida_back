@@ -50,6 +50,10 @@ Scrap.initiate(sequelize);
 ScrapFolder.initiate(sequelize);
 FriendList.initiate(sequelize);
 
+db.Itinerary.associate(db);
+db.Sharer.associate(db);
+db.Place.associate(db);
+
 Scrap.associate(db);
 ScrapFolder.associate(db);
 FriendList.associate(db);
