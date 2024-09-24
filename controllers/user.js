@@ -232,7 +232,7 @@ exports.sendnumber = async(req, res, next) => {
 
 // (update) 인증번호 검증 후 아이디 찾기
 exports.findid = async (req, res, next) => {
-    const { name, birth, email, code } = req.body;
+    const { name, email, code } = req.body;   //birth 삭제(0924)
 
     try {
         // 이메일로 가입된 사용자 정보 확인
@@ -251,11 +251,11 @@ exports.findid = async (req, res, next) => {
             return res.status(400).json({ message: '인증번호가 일치하지 않습니다.' });
         }
 
-        // 인증 성공 시, 사용자 정보 확인 (name, birth)
-        if (user.name === name && user.birth === birth) {
+        // 인증 성공 시, 사용자 정보 확인 (name)
+        if (user.name === name) {
             // 사용자 ID 반환
             res.render('find/id/success', {
-                Findid: user.id   // 프론트 -> <%= Findid %>
+                Foundid: user.id   // 프론트 -> <%= Foundid %>
             });
         } else {
             return res.status(400).json({ message: '이름 또는 생년월일이 일치하지 않습니다.' });
@@ -270,7 +270,7 @@ exports.findid = async (req, res, next) => {
 
 // (update) 인증번호 검증 후 비밀번호 찾기
 exports.findpw = async (req, res, next) => {
-    const { name, id, birth, email, code } = req.body;
+    const { name, id, email, code } = req.body;   //birth 삭제(0924)
 
     try {
         // 입력받은 정보로 회원 확인
@@ -278,8 +278,7 @@ exports.findpw = async (req, res, next) => {
             where: {
                 email,
                 id,
-                name,
-                birth
+                name
             }
         });
 
