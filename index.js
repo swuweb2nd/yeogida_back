@@ -16,7 +16,7 @@ const app = express();
 app.use(passport.initialize());
 
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
 
 
 //미들웨어설정 
