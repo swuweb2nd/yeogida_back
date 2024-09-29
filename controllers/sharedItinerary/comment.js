@@ -1,4 +1,4 @@
-const Comment = require('../models/comment');
+const Comment = require('../../models/comment');
 
 // 댓글 작성
 exports.createComment = async (req, res) => {

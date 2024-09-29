@@ -1,4 +1,4 @@
-const Scrap = require('../models/scrap');
+const Scrap = require('../../models/scrap');
 
 // 스크랩 추가
 exports.addScrap = async (req, res) => {

@@ -1,4 +1,4 @@
-const Itinerary = require('../models/Itinerary');
+const Itinerary = require('../../models/Itinerary');
 
 // 좋아요 추가
 exports.addLike = async (req, res) => {

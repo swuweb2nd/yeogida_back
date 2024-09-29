@@ -1,4 +1,4 @@
-const Itinerary = require('../models/Itinerary');
+const Itinerary = require('../../models/Itinerary');
 const { Op } = require('sequelize');
 
 // 공유된 일정 목록 조회
@@ -38,7 +38,7 @@ exports.getSharedItineraryById = async (req, res) => {
     try {
         const itinerary = await Itinerary.findByPk(shared_itineraries_id);
         if (itinerary) {
-            res.status(200).json({ message: `ID가 ${shared_itineraries_id}인 공유 일정`, data: itinerary });
+            res.status(200).json({ message: `ID가 ${shared_itineraries_id}인 공유 일정`, data: itinerary }); // 템플릿 리터럴 수정
         } else {
             res.status(404).json({ message: "해당 일정을 찾을 수 없습니다." });
         }
@@ -53,7 +53,7 @@ exports.getItineraryDay = async (req, res) => {
     try {
         const itineraryDay = await Itinerary.findOne({ where: { id: shared_itineraries_id, day } });
         if (itineraryDay) {
-            res.status(200).json({ message: `${day}일차 일정 조회`, data: itineraryDay });
+            res.status(200).json({ message: `${day}일차 일정 조회`, data: itineraryDay }); // 템플릿 리터럴 수정
         } else {
             res.status(404).json({ message: "해당 일차 일정을 찾을 수 없습니다." });
         }
