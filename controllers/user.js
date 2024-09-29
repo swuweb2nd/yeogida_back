@@ -64,10 +64,14 @@ exports.signup = async (req, res, next) => {
         return res.redirect('/signup?error=passwordsNotMatch'); // 비밀번호 불일치 시 에러 처리
     }
     try{
-        const exUser = await User.findOne( {where: {email}}); //email로 기존에 가입한 회원정보가 있는지 확인 (수정가능)
+        const exUser = await User.findOne( {where: {email}}); //email로 기존에 가입한 회원정보가 있는지 확인 (이메일중복확인)
         if(exUser){
             return res.redirect('/signup?error=exist') // 기존가입한 회원정보가 있으면, 에러 처리
         }
+
+        // 재입력한 비밀번호가 서로 일치하고, 이메일의 중복이 없으면
+        // 회원가입 절차 실행
+
         // 비밀번호 암호화
         const hash = await bcrypt.hash(password, 12);
 
@@ -80,7 +84,8 @@ exports.signup = async (req, res, next) => {
             phonenumber,
             birth,
         });
-        return res.redirect('/login');  // 회원가입 성공 후 로그인페이지로 리다이렉트
+        // 회원가입 성공 후 로그인페이지로 리다이렉트
+        return res.redirect('/login');  
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
@@ -185,15 +190,59 @@ function generateRandomCode(n) {
     return str;
 };
 
-
-// 인증번호 받기 (메일) 
-exports.sendnumber = async(req, res, next) => {
+// 회원가입 -> 인증번호 전송하기
+exports.sendnumberSignup = async(req, res, next) => {
     const { email, name } = req.body;  // 요청에서 이메일과 이름을 가져옴
     code = generateRandomCode(6); // 6자리 랜덤 코드 생성
     const expiresAt = new Date(Date.now() + 3 * 60 * 1000);  // 인증번호 유효기간 설정: 3분 후 만료
 
 
     try{
+        // 회원가입용 인증번호 전송은, 해당 이메일로 가입한 사용자가 없을때만!! 전송한다.
+        const user = await User.findOne({ where: { email } });
+
+        if (user) {
+            return res.status(409).json({ message: '기존에 회원가입한 이메일입니다.' });
+        }
+
+        const mailOptions = {
+            from: 'yeogida@gmail.com',  // 발신자 정보
+            to: email,  // 수신자 이메일
+            subject: '[여기다] 회원가입 시, 메일인증을 위한 인증번호 발송',
+            text: `안녕하세요, ${name}님. 인증번호 [${code}]를 입력하세요.`,
+            html: `<p>안녕하세요, ${name}님. 인증번호 <strong>[${code}]</strong>를 입력하세요.</p>`
+        };
+    
+        // 이메일 전송
+        await transporter.sendMail(mailOptions);
+
+        // Users 테이블에 인증번호와 만료 시간 저장
+        await user.update({
+            verificationCode: code,
+            verificationExpiresAt: expiresAt
+        });
+
+        // 이메일 전송 성공 시 응답
+        return res.status(200).json({
+            message: '인증번호가 발송되었습니다. 이메일을 확인해주세요.'
+        });
+        
+    }catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+
+// 아이디/비밀번호 찾기 -> 인증번호 전송하기
+exports.sendnumberIDPW = async(req, res, next) => {
+    const { email, name } = req.body;  // 요청에서 이메일과 이름을 가져옴
+    code = generateRandomCode(6); // 6자리 랜덤 코드 생성
+    const expiresAt = new Date(Date.now() + 3 * 60 * 1000);  // 인증번호 유효기간 설정: 3분 후 만료
+
+
+    try{
+        // 아이디/비밀번호 찾기 -> 인증번호 전송은, 해당 이메일로 가입한 사용자가 있을때만 전송한다.
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
@@ -299,7 +348,8 @@ exports.findpw = async (req, res, next) => {
         const token = jwt.sign({ id: exUser.id, email: exUser.email }, process.env.JWT_SECRET, {
             expiresIn: '10m'  // 토큰 유효기간 10분
         });
-
+        
+        // 해당 회원이 있으면 
         // 비밀번호 재설정 URL
         const resetUrl = `https://www.yeogida.net//reset-pw?token=${token}`;
 
