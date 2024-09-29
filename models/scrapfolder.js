@@ -4,28 +4,28 @@ class ScrapFolder extends Sequelize.Model{
   static initiate(sequelize){
     ScrapFolder.init({
       scrapfolder_id: {
-        type: DataTypes.BIGINT,
+        type: Sequelize.BIGINT,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
       },
       user_id: {
-        type: DataTypes.BIGINT,
+        type: Sequelize.BIGINT,
         allowNull: false,
         references: {
-          model: 'Users', // Users 테이블과 연결
+          model: 'User', 
           key: 'user_id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
       scrapfolder_name: {
-        type: DataTypes.STRING(40),
+        type: Sequelize.STRING,
         allowNull: false
       },
       addDate: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       },
     }, {
       sequelize,

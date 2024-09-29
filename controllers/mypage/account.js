@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const User = require('../models/user');
+const User = require('../../models/user');
 
 exports.verifyPassword = async (req, res) => {
     if (!req.isAuthenticated()) {

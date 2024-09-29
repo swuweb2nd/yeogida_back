@@ -83,8 +83,11 @@ class User extends Sequelize.Model {
     db.User.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'user_id' });
 
     //회원정보 - 친구목록
-    db.User.hasMany(db.FriendList, { foreignKey: 'friend_id', sourceKey: 'user_id' });
+    //db.User.hasMany(db.FriendList, { foreignKey: 'friend_id', sourceKey: 'user_id' });
 
+    db.User.hasMany(db.FriendList, { foreignKey: 'from_user_id', sourceKey: 'user_id' });
+    db.User.hasMany(db.FriendList, { foreignKey: 'to_user_id', sourceKey: 'user_id' });
+  
     //회원정보 - 알림
     db.User.hasMany(db.Alarm, { foreignKey: 'alarm_id', sourceKey: 'user_id' });
 

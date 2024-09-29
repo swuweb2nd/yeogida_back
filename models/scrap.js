@@ -4,17 +4,17 @@ class Scrap extends Sequelize.Model {
   static initiate(sequelize) {
     Scrap.init({
       scrap_id: {
-        type: DataTypes.BIGINT,
+        type: Sequelize.BIGINT,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
       },
       scraptype_id: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       scrapfolder_id: {
-        type: DataTypes.BIGINT,
+        type: Sequelize.BIGINT,
         allowNull: false,
         references: {
           model: 'ScrapFolder', // ScrapFolder 테이블과 연결
