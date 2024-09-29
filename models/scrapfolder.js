@@ -1,30 +1,50 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('./path_to_your_sequelize_instance'); // Sequelize 인스턴스를 불러옵니다.
+const Sequelize = require('sequelize');
 
-const ScrapFolder = sequelize.define('ScrapFolder', {
-  scrapfolder_id: {
-    type: DataTypes.BIGINT,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  user_id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    references: {
-      model: 'Users', // Users 테이블과 연결
-      key: 'user_id'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
-  scrapfolder_name: {
-    type: DataTypes.STRING(40),
-    allowNull: false
+class ScrapFolder extends Sequelize.Model{
+  static initiate(sequelize){
+    ScrapFolder.init({
+      scrapfolder_id: {
+        type: Sequelize.BIGINT,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false
+      },
+      user_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        references: {
+          model: 'User', 
+          key: 'user_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
+      scrapfolder_name: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      addDate: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+      },
+    }, {
+      sequelize,
+      timestamps: false,
+      underscored: false,
+      modelName: 'ScrapFolder',
+      tableName: 'scrapfolder',
+      paranoid: false,
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
+    });
   }
-}, {
-  tableName: 'scrapFolder', // 테이블 이름 명시
-  timestamps: false // createdAt, updatedAt 컬럼을 생성하지 않음
-});
+
+  static associate(db){
+    db.ScrapFolder.belongsTo(db.User, {foreinKey: 'scrapfolder_id', targetKey:'user_id'});
+    db.ScrapFolder.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'scrapfolder_id' });
+
+  }
+};
+
 
 module.exports = ScrapFolder;

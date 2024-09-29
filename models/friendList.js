@@ -1,45 +1,66 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('./path_to_your_sequelize_instance'); // Sequelize 인스턴스를 불러옵니다.
+const Sequelize = require('sequelize');
 
-const FriendList = sequelize.define('FriendList', {
-  friend_id: {  // 고유 식별자 (Primary Key)
-    type: DataTypes.BIGINT,
-    autoIncrement: true,   // 자동 증가
-    primaryKey: true,      // Primary Key 설정
-    allowNull: false
-  },
-  user_id: {  // 친구 요청을 보낸 사용자 ID (외래 키)
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    references: {
-      model: 'Users', // Users 테이블을 참조
-      key: 'user_id'
-    },
-    onUpdate: 'CASCADE',  // Users 테이블이 업데이트될 때 연쇄적으로 업데이트
-    onDelete: 'CASCADE'   // Users 테이블에서 삭제될 때 연쇄적으로 삭제
-  },
-  friend_user_id: {  // 친구 요청을 받은 사용자 ID (외래 키)
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    references: {
-      model: 'Users', // Users 테이블을 참조
-      key: 'user_id'
-    },
-    onUpdate: 'CASCADE',  // Users 테이블이 업데이트될 때 연쇄적으로 업데이트
-    onDelete: 'CASCADE'   // Users 테이블에서 삭제될 때 연쇄적으로 삭제
-  },
-  add_date: {  // 친구 요청이 발생한 날짜
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
-  },
-  status: {  // 친구 상태 (0: 친구, 1: 요청받음, 2: 요청보냄, 3: 거절)
-    type: DataTypes.INTEGER,
-    allowNull: false
+class FriendList extends Sequelize.Model {
+  static initiate(sequelize) {
+    FriendList.init({
+      friend_id: {  
+        type: Sequelize.BIGINT,
+        autoIncrement: true, 
+        primaryKey: true,      
+        allowNull: false
+      },
+      from_user_id: {  
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        references: {
+          model: 'User', 
+          key: 'user_id'
+        },
+        onUpdate: 'CASCADE',  
+        onDelete: 'CASCADE'  
+      },
+      to_user_id: {  
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        references: {
+          model: 'User', 
+          key: 'user_id'
+        },
+        onUpdate: 'CASCADE',  
+        onDelete: 'CASCADE'   
+      },
+      request_date: {  
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW
+      },
+      friend_date: { 
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+      },
+      status: {  
+        type: Sequelize.INTEGER,
+        allowNull: false
+      }
+    }, {
+      sequelize,  // Sequelize instance
+      timestamps: false,  // Do not use createdAt and updatedAt fields
+      underscored: false,  // Use camelCase
+      modelName: 'FriendList',  // Set model name
+      tableName: 'friendList',  // Set table name
+      paranoid: false,  // Do not keep deleted data
+      charset: 'utf8',
+      collate: 'utf8_general_ci'
+    });
   }
-}, {
-  tableName: 'friendList',  // 테이블 이름 설정
-  timestamps: false         // createdAt, updatedAt 필드를 사용하지 않음
-});
+
+  static associate(db) {
+    // Relationship with the user who sent the friend request
+    db.FriendList.belongsTo(db.User, { foreignKey: 'from_user_id', targetKey: 'user_id' });
+
+    // Relationship with the user who received the friend request
+    db.FriendList.belongsTo(db.User, { foreignKey: 'to_user_id', targetKey: 'user_id' });
+  }
+}
 
 module.exports = FriendList;

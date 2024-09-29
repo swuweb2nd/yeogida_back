@@ -1,30 +1,30 @@
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 //공유여행 알림 모델
 
-class Alarm extends sequelize.Model {
+class Alarm extends Sequelize.Model {
   static initiate(sequelize) {
-    User.init({
+    Alarm.init({
     //식별 아이디
       alarm_id: {
-        type : sequelize.INTEGER,
+        type : Sequelize.BIGINT,
         allowNull: false,
-        primarykey: true,
+        primaryKey: true,
         autoIncrement: true,
       },
     //(여행공유 또는 친구추가를 보낸) 회원 식별 아이디 
       user_id: {
-        type: sequelize.STRING(40),
+        type: Sequelize.STRING,
         allowNull: false,
       },
     //(여행공유 요청 된) 여행일정 식별 아이디
       itinerary_id: {
-        type: sequelize.STRING(40),
+        type: Sequelize.STRING,
         allowNull: true,
       },
     // 알림 상태 : 0=친구추가 1=여행공유
       status: {
-        type: sequelize.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },  
 

@@ -13,7 +13,7 @@ class Comment extends Sequelize.Model {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'Users',
+                    model: 'User',
                     key: 'user_id',
                 },
             },
@@ -38,7 +38,7 @@ class Comment extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Comment.belongsTo(db.Users, { foreignKey: 'user_id' });
+        db.Comment.belongsTo(db.User, { foreignKey: 'user_id' });
         db.Comment.belongsTo(db.Itinerary, { foreignKey: 'itinerary_id' });
     }
 }

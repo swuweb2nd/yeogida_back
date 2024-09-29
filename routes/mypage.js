@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const { verifyPassword, fetchInfo } = require('../controllers/account'); 
+const { verifyPassword, fetchInfo, editAccount } = require('../controllers/mypage/account'); 
 
 
 //마이페이지 접근 시 비밀번호 확인
@@ -11,8 +11,9 @@ router.post('/account', verifyPassword);
 router.get('/account', fetchInfo);
 
 //PUT 요청으로 개인정보 수정
-router.put('/account', editaccount);
+router.put('/account', editAccount);
 
+/*
 //친구 목록 조회(최신순)
 router.get('/friend?status=recent',);
 
@@ -54,6 +55,6 @@ router.get('/scrap/{folderid}',);
 
 //일정 스크랩 삭제
 router.delete('/scrap/{folderId}/delete/{scrapId}',);
-
+*/
 
 module.exports = router;

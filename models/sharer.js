@@ -3,10 +3,11 @@ const Sequelize = require('sequelize');
 class Sharer extends Sequelize.Model {
     static initiate(sequelize) {
         Sharer.init({
-            share_friend_id: {
+            share_id: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 primaryKey: true,
+                autoIncrement: true,
             },
             itinerary_id: {
                 type: Sequelize.BIGINT,
@@ -16,25 +17,29 @@ class Sharer extends Sequelize.Model {
                     key: 'itinerary_id',
                 },
             },
-            friend_id2: {
+            sharer_id: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'FriendList',
-                    key: 'friend_id',
-                },
-            },
-            role: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-            },
-            user_id: {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-                references: {
-                    model: 'Users',
+                    model: 'User',
                     key: 'user_id',
                 },
+            },
+            friend_id: {
+                type: Sequelize.BIGINT,
+                allowNull: false,
+                references: {
+                    model: 'User',
+                    key: 'user_id',
+                },
+            },
+            status: {
+                type: Sequelize.INTEGER,
+                allowNull: false, // 0=대기중, 1=수락됨, 2=거절됨
+            },
+            shared_at: {
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.NOW,
             },
         }, {
             sequelize,
@@ -45,8 +50,8 @@ class Sharer extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Sharer.belongsTo(db.User, { foreignKey: 'user_id' });
-        db.Sharer.belongsTo(db.FriendList, { foreignKey: 'friend_id2' });
+        db.Sharer.belongsTo(db.User, { foreignKey: 'sharer_id' });
+        db.Sharer.belongsTo(db.User, { foreignKey: 'friend_id' });
         db.Sharer.belongsTo(db.Itinerary, { foreignKey: 'itinerary_id' });
     }
 }
