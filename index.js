@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 
 
 app.use('/users', require('./routes/user'));
-app.use('/mypage', require('./routes/account'));    //mypage로 들어왔을 때 routes의 mypage파일로
+app.use('/mypage', require('./routes/mypage'));    //mypage로 들어왔을 때 routes의 mypage파일로
 app.use('/shared-itineraries', require('./routes/shared-itineraries'));
 
 app.listen(port, () => {
