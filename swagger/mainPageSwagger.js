@@ -10,8 +10,10 @@
  *         name: sort
  *         schema:
  *           type: string
- *           enum: [popularity, newest]
- *         description: 정렬 기준 (popularity: 인기순, newest: 최신순)
+ *           enum: 
+ *             - popularity
+ *             - newest
+ *         description: "정렬 기준 (popularity: 인기순, newest: 최신순)"  # 문자열로 인식하게끔 수정
  *     responses:
  *       200:
  *         description: 성공
@@ -64,7 +66,7 @@
  *         name: query
  *         schema:
  *           type: string
- *         description: 검색할 단어
+ *         description: "검색할 단어"  # 문자열로 인식하게끔 수정
  *     responses:
  *       200:
  *         description: 성공
