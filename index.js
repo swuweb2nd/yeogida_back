@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());  // 쿠키설정
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
 });
 
 
