@@ -4,7 +4,10 @@ const jwt = require('jsonwebtoken');
 //토큰 검증 미들웨어 
 exports.verifyToken = (req, res, next) => {
     try {
-      res.locals.decoded = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
+      //jwt토큰을 httponly 쿠키에 저장했기 때문에, 쿠키에서 가져와 검증한다.
+      const token = req.cookies.token;
+
+      res.locals.decoded = jwt.verify(token, process.env.JWT_SECRET); 
       return next();  //토큰검증 성공하면 넘어가기
     } catch (error) {
       if (error.name === 'TokenExpiredError') { // 유효기간 초과
