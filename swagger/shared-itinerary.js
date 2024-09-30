@@ -2,10 +2,10 @@
 /**
  * @swagger
  * paths:
- *  /shared-itineraries:
+ *  /shared-itineraries?status=recent:
  *   get:
  *    tags:
- *    - Itineraries
+ *    - shared-itineraries
  *    summary: 최근 정렬된 공유 여행지 목록 조회
  *    description: 주어진 정렬 기준에 따라 공유된 여행지 목록을 반환합니다. status=recent일 경우 최신 순으로 정렬됩니다. keyword 파라미터를 이용해 검색어 필터링이 가능합니다.
  *    parameters:
@@ -85,10 +85,10 @@
 /**
  * @swagger
  * paths:
- *  /shared-itineraries:
+ *  /shared-itineraries?status=popular:
  *   get:
  *    tags:
- *    - Itineraries
+ *    - shared-itineraries
  *    summary: 인기 정렬된 공유 여행지 목록 조회
  *    description: 주어진 정렬 기준에 따라 공유된 여행지 목록을 반환합니다. status=popular일 경우 인기 순으로 정렬됩니다. keyword 파라미터를 이용해 검색어 필터링이 가능합니다.
  *    parameters:
@@ -175,7 +175,7 @@
  *  /shared-itineraries/{shared-itineraries_id}:
  *   get:
  *    tags:
- *    - Itineraries
+ *    - shared-itineraries
  *    summary: 특정 공유 일정 조회
  *    description: 주어진 ID에 해당하는 공유 일정을 조회합니다.
  *    parameters:
@@ -273,7 +273,7 @@
  *  /shared-itineraries/{shared-itineraries_id}/day/{day}:
  *   get:
  *    tags:
- *    - Itineraries
+ *    - shared-itineraries
  *    summary: 특정 일차 일정 조회
  *    description: 특정 공유 일정의 특정 일차(day)의 일정을 조회합니다.
  *    parameters:
@@ -355,7 +355,7 @@
  *  post:
  *    summary: "댓글 작성"
  *    description: "특정 게시글에 댓글을 작성합니다."
- *    tags: [Comments]
+ *    tags: shared-itineraries
  *    parameters:
  *      - in: path
  *        name: shared-itineraries_id
@@ -408,7 +408,7 @@
  *  /shared-itineraries/{shared-itineraries_id}/comments:
  *   put:
  *    tags:
- *    - Comments
+ *    - shared-itineraries
  *    summary: 댓글 수정
  *    description: 특정 공유 일정 게시글의 댓글을 수정합니다.
  *    parameters:
@@ -468,7 +468,7 @@
  *  /shared-itineraries/{shared-itineraries_id}/comments:
  *   delete:
  *    tags:
- *    - Comments
+ *    - shared-itineraries
  *    summary: 댓글 삭제
  *    description: 특정 공유 일정 게시글의 댓글을 삭제합니다.
  *    parameters:
@@ -505,7 +505,7 @@
  *  /shared-itineraries/{shared-itineraries_id}/scrap:
  *   post:
  *    tags:
- *    - Scrap
+ *    - shared-itineraries
  *    summary: 공유 일정 스크랩
  *    description: 특정 공유 일정 게시글을 사용자의 폴더에 스크랩합니다.
  *    parameters:
@@ -561,7 +561,7 @@
  *  /shared-itineraries/{shared-itineraries_id}/scrap:
  *   delete:
  *    tags:
- *    - Scrap
+ *    - shared-itineraries
  *    summary: 공유 일정 스크랩 취소
  *    description: 특정 공유 일정 게시글에 대해 사용자가 저장한 스크랩을 취소합니다.
  *    parameters:
@@ -618,7 +618,7 @@
  *  /shared-itineraries/{shared-itineraries_id}/like:
  *   post:
  *    tags:
- *    - Like
+ *    - shared-itineraries
  *    summary: 공유 일정에 좋아요 추가
  *    description: 특정 공유 일정 게시글에 사용자가 좋아요를 추가합니다.
  *    parameters:
@@ -663,7 +663,7 @@
  *  /shared-itineraries/{shared-itineraries_id}/like:
  *   delete:
  *    tags:
- *    - Like
+ *    - shared-itineraries
  *    summary: 공유 일정에 좋아요 취소
  *    description: 특정 공유 일정 게시글에 대한 사용자의 좋아요를 취소합니다.
  *    parameters:
