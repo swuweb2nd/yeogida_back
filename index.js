@@ -36,6 +36,11 @@ app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
 });
 
+//GET /health 요청에 대해 상태코드 200으로 응답하는 API
+app.get('/health', (req, res) =>{
+  res.status(200).send("Success HealthCheck");
+})
+
 
 app.use('/users', require('./routes/user'));
 app.use('/mypage', require('./routes/mypage'));    //mypage로 들어왔을 때 routes의 mypage파일로
