@@ -304,11 +304,9 @@ exports.findid = async (req, res, next) => {
         // 인증 성공 시, 사용자 정보 확인 (name)
         if (user.name === name) {
             // 사용자 ID 반환
-            res.render('find/id/success', {
-                Foundid: user.id   // 프론트 -> <%= Foundid %>
-            });
+            return res.status(200).json({ message: "아이디 찾기 성공", foundId: user.id });
         } else {
-            return res.status(400).json({ message: '이름 또는 생년월일이 일치하지 않습니다.' });
+            return res.status(400).json({ message: '이름이 일치하지 않습니다.' });
         }
     } catch (error) {
         console.error(error);
@@ -532,31 +530,60 @@ exports.resetpw = async (req, res, next) => {
 };
 
 
-//--------------------------페이지 렌더링 관련 라우터-------------------------
 
 
-exports.renderLogin = (req, res) => {
-	res.sendFile(path.join(__dirname, '로그인.html'));
+// --------------- 페이지 조회 ---------------
+
+
+exports.pageLogin = (req, res) => {
+    try {  
+        res.status(200).json({ message: "로그인 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
+    } catch (error) {
+        res.status(500).json({ message: "500 서버 오류" });
+    }
 };
 
-exports.renderSignup = (req, res) => {
-	res.sendFile(path.join(__dirname, '회원가입.html'));
+exports.pageSignup = (req, res) => {
+    try {  
+        res.status(200).json({ message: "회원가입 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
+    } catch (error) {
+        res.status(500).json({ message: "500 서버 오류" });
+    }
 };
 
-exports.renderPw = (req, res) => {
-	res.sendFile(path.join(__dirname, '비밀번호찾기.html'));
+exports.pagePw = (req, res) => {
+    try {  
+        res.status(200).json({ message: "비밀번호찾기 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
+    } catch (error) {
+        res.status(500).json({ message: "500 서버 오류" });
+    }
 };
 
-exports.renderId = (req, res) => {
-	res.sendFile(path.join(__dirname, '아이디찾기.html'));
+exports.pageId = (req, res) => {
+    try {  
+        res.status(200).json({ message: "아이디찾기 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
+    } catch (error) {
+        res.status(500).json({ message: "500 서버 오류" });
+    }
 };
 
-exports.renderIdSuccess = (req, res) => {
-	res.sendFile(path.join(__dirname, '아이디찾기성공페이지.html'));
-    //JavaScript로 데이터를 전달한 후 클라이언트에서 DOM 조작으로 id 받아오기 (동적데이터를 sendFile로 가져올수없기때문)
+exports.pageSignup = (req, res) => {
+    try {  
+        res.status(200).json({ message: "회원가입 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
+    } catch (error) {
+        res.status(500).json({ message: "500 서버 오류" });
+    }
 };
 
-exports.renderResetPw = async (req, res, next) => {  //쿠키 설정 수정0930
+exports.pageIdSuccess = (req, res) => {
+    try {  
+        res.status(200).json({ message: "아이디찾기페이지 조회 성공", foundId: req.params.id }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
+    } catch (error) {
+        res.status(500).json({ message: "500 서버 오류" });
+    }
+};
+
+exports.pageResetPw = async (req, res, next) => {  //쿠키 설정 수정0930
     const { token } = req.params; // 이메일 링크에 포함된 토큰
     try {
         // 토큰 유효성 검사
@@ -578,8 +605,7 @@ exports.renderResetPw = async (req, res, next) => {  //쿠키 설정 수정0930
             maxAge: user.resetPasswordExpires - Date.now(), // 남은 유효 시간
             sameSite: 'Strict', // CSRF 방지를 위해 설정
         });
-
-	    res.sendFile(path.join(__dirname, '비밀번호재설정페이지.html'));
+        res.status(200).json({ message: "비밀번호 재설정 페이지 조회성공" });
     } catch (error) {
         console.error(error);
         next(error)

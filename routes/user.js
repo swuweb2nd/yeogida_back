@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 
 const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
-const { renderLogin, renderSignup, renderPw, renderId, renderIdSuccess, renderResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
+const { pageLogin,pageSignup, pagePw, pageId, pageIdSuccess, pageResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
 const { signup, login, logout, findpw, findid, resetpw, verifyid, verifyphone, verifynumber, sendnumberSignup, sendnumberIDPW } = require('../controllers/user'); // 기능 (POST)
 
 
@@ -25,10 +25,10 @@ router.post('/signup', isNotLoggedIn, signup);
 router.post('/logout', isLoggedIn, logout);
 
 // GET /users/login - 로그인 페이지 조회
-router.get('/login', isNotLoggedIn, renderLogin);
+router.get('/login', isNotLoggedIn, pageLogin);
 
 // GET /users/signup - 회원가입 페이지 조회
-router.get('/login', isNotLoggedIn, renderSignup);
+router.get('/login', isNotLoggedIn, pageSignup);
 
 // POST /users/find/id - 아이디 찾기
 router.post('/find/id', isNotLoggedIn, findid);
@@ -37,19 +37,19 @@ router.post('/find/id', isNotLoggedIn, findid);
 router.post('/find/pw', isNotLoggedIn, findpw);
 
 // GET /users/find/id - 아이디찾기 페이지 조회 
-router.get('/find/id', isNotLoggedIn, renderId);
+router.get('/find/id', isNotLoggedIn, pageId);
 
 // GET /users/find/pw - 비밀번호찾기 페이지 조회
-router.get('/find/pw', isNotLoggedIn, renderPw);
+router.get('/find/pw', isNotLoggedIn, pagePw);
 
 // GET /users/find/id/success?by=email - 아이디찾기성공 페이지 조회
-router.get('/find/id/success?by=email ', isNotLoggedIn, renderIdSuccess);
+router.get('/find/id/success?by=email ', isNotLoggedIn, pageIdSuccess);
 
 // POST /users/reset-pw?token=${token} - 비밀번호 재설정
 router.post('/reset-pw?token=${token}', isNotLoggedIn, resetpw);
 
 // GET /users/reset-pw?token=${token} - 비밀번호재설정 페이지 조회
-router.get('/reset-pw?token=${token}', isNotLoggedIn, renderResetPw);
+router.get('/reset-pw?token=${token}', isNotLoggedIn, pageResetPw);
 
 // GET /users/verify-id - 아이디 중복확인
 router.get('/verify-id', isNotLoggedIn, verifyid);
