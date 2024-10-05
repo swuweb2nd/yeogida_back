@@ -4,17 +4,25 @@ const { sequelize } = require('./models');
 
 //로그인, 로그아웃 구현을 위한 passport 모듈 연결 - sdh
 const passport = require('passport');
-//const passportConfig = require('./passport');
+
 const cookieParser = require('cookie-parser');
+
+//비밀번호재설정 - 쿠키관련 - CORS 설정 - sdh
+const cors = require('cors');
 
 const app = express();
 
-//passportConfig(); //패스포트 설정 - sdh
 
+//CORS 설정 - sdh
+const corsOptions = {
+  origin: 'http://yeogida.net',  // 허용할 프론트엔드 도메인(특정 도메인에서만 쿠키 허용하도록)
+  credentials: true,  // 쿠키를 허용하려면 true로 설정
+};
 
 // passport 초기화 
 app.use(passport.initialize());
-
+// CORS 미들웨어 적용
+app.use(cors(corsOptions));
 
 const port = process.env.PORT || 80;
 
@@ -27,6 +35,11 @@ app.use(cookieParser());  // 쿠키설정
 app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
 });
+
+//GET /health 요청에 대해 상태코드 200으로 응답하는 API
+app.get('/health', (req, res) =>{
+  res.status(200).send("Success HealthCheck");
+})
 
 
 app.use('/users', require('./routes/user'));

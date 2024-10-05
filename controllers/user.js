@@ -3,7 +3,8 @@ const passport = require('passport');
 const User = require('../models/user');  //models/user.js와 연결
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const { verifyToken } = require('../middlewares'); // 토큰검증 미들웨어 가져오기
+const { Op } = require('sequelize'); // 0930 추가
+//const { verifyToken } = require('../middlewares'); // 토큰검증 미들웨어 가져오기
 
 //로그인
 exports.login = (req, res, next) => {
@@ -349,9 +350,9 @@ exports.findpw = async (req, res, next) => {
             expiresIn: '10m'  // 토큰 유효기간 10분
         });
         
-        // 해당 회원이 있으면 
+        // 해당 회원이 있으면
         // 비밀번호 재설정 URL
-        const resetUrl = `https://www.yeogida.net//reset-pw?token=${token}`;
+        const resetUrl = `https://www.yeogida.net//reset-pw`;
 
         // 메일 내용 설정
         const mailOptions = {
@@ -474,26 +475,37 @@ exports.verifynumber = async (req, res, next) => {
 
 
 // 비밀번호 재설정
-exports.resetpw = async(req, res, next) => {
+exports.resetpw = async (req, res, next) => {
     const { newPassword, newPasswordCheck } = req.body;
 
     // 비밀번호와 비밀번호 확인이 일치하는지 검사
     if (newPassword !== newPasswordCheck) {
-        return res.status(400).json({message : '비밀번호가 서로 일치하지 않습니다. 다시 입력하세요.'});
+        return res.status(400).json({ message: '비밀번호가 서로 일치하지 않습니다. 다시 입력하세요.' });
     }
+
     try {
-        // verifyToken 미들웨어에서 검증된 토큰 데이터 가져오기
-        const decoded = res.locals.decoded;
+        // resetToken 
+        // 쿠키에서 토큰 가져오기
+        const token = req.cookies.resetToken; 
 
-        // 토큰에서 유저 정보 추출
-        const exUser = await User.findOne({ where: { id: decoded.id, email: decoded.email } });
+        if (!token) {
+            return res.status(400).json({ message: 'resetToken이 없습니다.' });
+        }
 
-        if (!exUser) {  // 사용자가 존재하지 않음
-            return res.status(404).json({ message: '잘못된 사용자 정보입니다.' });
+        // 토큰 유효성 검사 및 사용자 찾기
+        const user = await User.findOne({
+            where: {
+                resetPasswordToken: token,
+                resetPasswordExpires: { [Op.gt]: Date.now() }, // 토큰 만료 시간 확인
+            },
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: '유효하지 않거나 만료된 토큰입니다.' });
         }
 
         // 기존 비밀번호와 동일한지 확인
-        const isSamePassword = await bcrypt.compare(newPassword, exUser.password);
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
         if (isSamePassword) {
             return res.status(400).json({ message: '새 비밀번호가 기존 비밀번호와 동일합니다. 다른 비밀번호를 입력하세요.' });
         }
@@ -501,8 +513,15 @@ exports.resetpw = async(req, res, next) => {
         // 새 비밀번호 해시화
         const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-        // 사용자 비밀번호 업데이트
-        await User.update({ password: hashedPassword }, { where: { id: exUser.id } });
+        // 사용자 비밀번호 업데이트 및 토큰 무효화
+        await user.update({
+            password: hashedPassword,
+            resetPasswordToken: null,
+            resetPasswordExpires: null,
+        });
+
+        // 토큰 쿠키 삭제
+        res.clearCookie('resetToken');
 
         return res.status(200).json({ message: '비밀번호가 성공적으로 변경되었습니다.' });
 
@@ -537,6 +556,32 @@ exports.renderIdSuccess = (req, res) => {
     //JavaScript로 데이터를 전달한 후 클라이언트에서 DOM 조작으로 id 받아오기 (동적데이터를 sendFile로 가져올수없기때문)
 };
 
-exports.renderResetPw = (req, res) => {
-	res.sendFile(path.join(__dirname, '비밀번호재설정페이지.html'));
+exports.renderResetPw = async (req, res, next) => {  //쿠키 설정 수정0930
+    const { token } = req.params; // 이메일 링크에 포함된 토큰
+    try {
+        // 토큰 유효성 검사
+        const user = await User.findOne({
+            where: {
+                resetPasswordToken: token,
+                resetPasswordExpires: { [Op.gt]: Date.now() },
+            },
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: '유효하지 않거나 만료된 토큰입니다.' });
+        }
+
+        // 토큰을 httpOnly 쿠키에 설정
+        res.cookie('resetToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: user.resetPasswordExpires - Date.now(), // 남은 유효 시간
+            sameSite: 'Strict', // CSRF 방지를 위해 설정
+        });
+
+	    res.sendFile(path.join(__dirname, '비밀번호재설정페이지.html'));
+    } catch (error) {
+        console.error(error);
+        next(error)
+    }
 };
