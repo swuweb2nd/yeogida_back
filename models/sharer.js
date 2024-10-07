@@ -13,7 +13,7 @@ class Sharer extends Sequelize.Model {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'Itinerary',
+                    model: 'Itineraries',
                     key: 'itinerary_id',
                 },
             },
@@ -21,7 +21,7 @@ class Sharer extends Sequelize.Model {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'User',
+                    model: 'users',
                     key: 'user_id',
                 },
             },
@@ -29,7 +29,7 @@ class Sharer extends Sequelize.Model {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'User',
+                    model: 'users',
                     key: 'user_id',
                 },
             },

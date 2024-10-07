@@ -13,7 +13,7 @@ class ScrapFolder extends Sequelize.Model{
         type: Sequelize.BIGINT,
         allowNull: false,
         references: {
-          model: 'User', 
+          model: 'users', 
           key: 'user_id'
         },
         onUpdate: 'CASCADE',
