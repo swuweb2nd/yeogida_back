@@ -33,9 +33,14 @@ app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());  // 쿠키설정
 
+/*
 app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
+});*/
+app.get('/', (req, res) => {
+  res.redirect('/itineraries/recent'); // 메인 페이지로
 });
+
 
 //GET /health 요청에 대해 상태코드 200으로 응답하는 API
 app.get('/health', (req, res) =>{
@@ -63,7 +68,7 @@ sequelize.sync({ force: false})
 
 // 메인 페이지 라우트 추가
 const mainPageRoutes = require('./routes/mainPageRoutes');
-app.use('/api', mainPageRoutes);
+app.use('/', mainPageRoutes);
 
 //swagger 설정 관련 코드
 // swagger.js 파일에서 가져옴
