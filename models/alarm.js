@@ -14,7 +14,7 @@ class Alarm extends Sequelize.Model {
       },
     //(여행공유 또는 친구추가를 보낸) 회원 식별 아이디 
       user_id: {
-        type: Sequelize.STRING,
+        type: Sequelize.BIGINT,
         allowNull: false,
       },
     //(여행공유 요청 된) 여행일정 식별 아이디

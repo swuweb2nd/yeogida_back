@@ -17,7 +17,7 @@ class Scrap extends Sequelize.Model {
         type: Sequelize.BIGINT,
         allowNull: false,
         references: {
-          model: 'ScrapFolder', // ScrapFolder 테이블과 연결
+          model: 'scrapfolder', // ScrapFolder 테이블과 연결
           key: 'scrapfolder_id'
         },
         onUpdate: 'CASCADE',
