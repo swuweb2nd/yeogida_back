@@ -25,13 +25,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // 모든 응답에 대한 CORS 헤더 설정
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'https://yeogida.net');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
-});
+});*/
 
 // OPTIONS 요청 처리 (preflight 요청 허용)
 app.options('*', cors(corsOptions));
