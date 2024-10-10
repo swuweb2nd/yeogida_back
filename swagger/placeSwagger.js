@@ -239,3 +239,75 @@
  *                   type: string
  *                   example: Failed to delete place
  */
+
+/**
+ * @swagger
+ * /api/places/search:
+ *   get:
+ *     tags:
+ *       - Places
+ *     summary: 장소 검색
+ *     description: 네이버 지역 검색 API를 사용하여 장소를 검색합니다.
+ *     parameters:
+ *       - name: query
+ *         in: query
+ *         required: true
+ *         description: 검색할 장소의 키워드 (예: 카페)
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: 검색 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   title:
+ *                     type: string
+ *                     description: 장소의 이름
+ *                   link:
+ *                     type: string
+ *                     description: 네이버에서 장소의 상세 정보 링크
+ *                   category:
+ *                     type: string
+ *                     description: 장소의 카테고리
+ *                   description:
+ *                     type: string
+ *                     description: 장소에 대한 설명
+ *                   address:
+ *                     type: string
+ *                     description: 장소의 지번 주소
+ *                   roadAddress:
+ *                     type: string
+ *                     description: 장소의 도로명 주소
+ *                   mapx:
+ *                     type: integer
+ *                     description: 장소의 X 좌표 (지도에서의 위치)
+ *                   mapy:
+ *                     type: integer
+ *                     description: 장소의 Y 좌표 (지도에서의 위치)
+ *       400:
+ *         description: 잘못된 요청 (쿼리 파라미터가 없음)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid query parameter
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to fetch data from Naver API
+ */
+
