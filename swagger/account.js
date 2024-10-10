@@ -11,19 +11,12 @@ module.exports = router;
 /**
  * @swagger
  * paths:
- *  /mypage/account/:
+ *  /mypage/account:
  *   post:
  *    tags:
  *    - Account
  *    summary: 비밀번호를 통한 본인 확인
  *    description: 사용자가 자신의 비밀번호를 제출하여 본인 확인을 수행합니다.
- *    parameters:
- *    - in: header
- *      name: Authorization
- *      required: true
- *      description: Access token
- *      schema:
- *        type: string
  *    requestBody:
  *      required: true
  *      content:
@@ -70,13 +63,6 @@ module.exports = router;
  *    - Account
  *    summary: 개인정보 조회
  *    description: 사용자가 개인정보를 수정하기 위해 기존 정보를 조회합니다.
- *    parameters:
- *    - in: header
- *      name: Authorization
- *      required: true
- *      description: Access token
- *      schema:
- *        type: string
  *    responses:
  *     200:
  *      description: 개인정보 조회 성공
@@ -97,7 +83,7 @@ module.exports = router;
  *                type: string
  *                description: 사용자 생년월일
  *                example: "1999-03-31"
- *              password:
+ *              phonenumber:
  *                type: string
  *                description: 사용자 전화번호
  *                example: "010-1111-1111"
@@ -135,12 +121,6 @@ module.exports = router;
  *    summary: 개인정보 수정
  *    description: 사용자가 자신의 개인정보를 수정합니다.
  *    parameters:
- *    - in: header
- *      name: Authorization
- *      required: true
- *      description: Access token
- *      schema:
- *        type: string
  *    requestBody:
  *      required: true
  *      content:
@@ -150,8 +130,12 @@ module.exports = router;
  *            properties:
  *              password:
  *                type: string
- *                description: 사용자가 수정할 전화번호
- *                example: "010-1111-1111"
+ *                description: 사용자가 수정할 비밀번호
+ *                example: "asdf1234"
+ *              checkpassword:
+ *                type: string
+ *                description: 사용자가 수정한 비밀번호 확인
+ *                example: "asdf1234"
  *              email:
  *                type: string
  *                description: 사용자가 수정할 이메일 주소

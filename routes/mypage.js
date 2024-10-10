@@ -2,16 +2,17 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const { verifyPassword, fetchInfo, editAccount } = require('../controllers/mypage/account'); 
+const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
 
 
 //마이페이지 접근 시 비밀번호 확인
-router.post('/account', verifyPassword);
+router.post('/account', isLoggedIn, verifyPassword);
 
 // GET 요청으로 사용자 정보 조회
-router.get('/account', fetchInfo);
+router.get('/account', isLoggedIn, fetchInfo);
 
 //PUT 요청으로 개인정보 수정
-router.put('/account', editAccount);
+router.put('/account', isLoggedIn, editAccount);
 
 /*
 //친구 목록 조회(최신순)
