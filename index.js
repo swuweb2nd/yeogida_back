@@ -20,6 +20,21 @@ const corsOptions = {
   credentials: true,  // 쿠키를 허용하려면 true로 설정
 };
 
+// CORS 미들웨어 적용
+app.use(cors(corsOptions));
+
+// 모든 응답에 대한 CORS 헤더 설정
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://yeogida.net');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+// OPTIONS 요청 처리 (preflight 요청 허용)
+app.options('*', cors(corsOptions));
+
 // passport 초기화 
 app.use(passport.initialize());
 // CORS 미들웨어 적용
@@ -33,14 +48,9 @@ app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());  // 쿠키설정
 
-/*
 app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
-});*/
-app.get('/', (req, res) => {
-  res.redirect('/itineraries/recent'); // 메인 페이지로
 });
-
 
 //GET /health 요청에 대해 상태코드 200으로 응답하는 API
 app.get('/health', (req, res) =>{
@@ -68,7 +78,7 @@ sequelize.sync({ force: false})
 
 // 메인 페이지 라우트 추가
 const mainPageRoutes = require('./routes/mainPageRoutes');
-app.use('/', mainPageRoutes);
+app.use('/api', mainPageRoutes);
 
 //swagger 설정 관련 코드
 // swagger.js 파일에서 가져옴
