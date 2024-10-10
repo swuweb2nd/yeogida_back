@@ -15,7 +15,7 @@ const options = {
         },
         servers: [
             {
-                url: "https://yeogida.net",
+                url: "https://yeogida.net/",
             },
         ],
         components: {
