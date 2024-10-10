@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();  
 
 const { sequelize } = require('./models');
 
@@ -18,6 +19,21 @@ const corsOptions = {
   origin: 'https://yeogida.net',  // 허용할 프론트엔드 도메인(특정 도메인에서만 쿠키 허용하도록)
   credentials: true,  // 쿠키를 허용하려면 true로 설정
 };
+
+// CORS 미들웨어 적용
+app.use(cors(corsOptions));
+
+// 모든 응답에 대한 CORS 헤더 설정
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://yeogida.net');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+// OPTIONS 요청 처리 (preflight 요청 허용)
+app.options('*', cors(corsOptions));
 
 // passport 초기화 
 app.use(passport.initialize());

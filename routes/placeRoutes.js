@@ -17,4 +17,7 @@ router.put('/places/:place_id', placeController.updatePlace);
 // 특정 여행장소 삭제
 router.delete('/places/:place_id', placeController.deletePlace);
 
+// 장소 검색 API 추가
+router.get('/search', placeController.searchPlaces);
+
 module.exports = router;

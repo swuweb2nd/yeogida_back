@@ -12,7 +12,7 @@ class Place extends Sequelize.Model {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {
-                    model: 'Itinerary',
+                    model: 'Itineraries',
                     key: 'itinerary_id'
                 },
                 onDelete: 'CASCADE'
@@ -49,26 +49,20 @@ class Place extends Sequelize.Model {
                 type: Sequelize.STRING(100),
                 allowNull: true
             },
-            created_at: {
-                type: Sequelize.DATE,
-                defaultValue: Sequelize.NOW
-            },
-            updated_at: {
-                type: Sequelize.DATE,
-                defaultValue: Sequelize.NOW,
-                onUpdate: Sequelize.NOW
-            }
+            
         }, {
             sequelize,
             modelName: 'Place',
             tableName: 'Places',
-            timestamps: false
+            ttimestamps: true, // Sequelize의 기본 타임스탬프 필드 사용
+            underscored: true, // createdAt과 updatedAt을 snake_case로 변환
+
         });
     }
 
     static associate(db) {
         db.Place.belongsTo(db.Itinerary, { foreignKey: 'itinerary_id', onDelete: 'CASCADE' });
-        //db.Itinerary.hasMany(db.Place, { foreignKey: 'itinerary_id', onDelete: 'CASCADE' });
+        db.Itinerary.hasMany(db.Place, { foreignKey: 'itinerary_id', onDelete: 'CASCADE' });
     }
 }
 

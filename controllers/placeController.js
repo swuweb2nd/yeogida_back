@@ -1,4 +1,29 @@
+const axios = require('axios');
 const { Place } = require('../models');
+
+// 네이버 API 인증 정보
+const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID;
+const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET;
+
+// 장소 검색 API 엔드포인트 추가
+exports.searchPlaces = async (req, res) => {
+    const query = req.query.query; // 검색어를 쿼리 파라미터로 받음
+    try {
+        const response = await axios.get('https://openapi.naver.com/v1/search/local.json', {
+            params: { query, display: 5, start: 1, sort: 'random' },
+            headers: {
+                'X-Naver-Client-Id': NAVER_CLIENT_ID,
+                'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
+            },
+        });
+        res.status(200).json(response.data.items);
+    } catch (error) {
+        console.error('Error fetching data from Naver API:', error);
+        res.status(500).json({ error: 'Failed to fetch data from Naver API' });
+    }
+};
+
+
 
 // 특정 여행일정에 대한 모든 여행장소 조회
 exports.getPlacesByItineraryId = async (req, res) => {

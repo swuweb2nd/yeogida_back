@@ -6,12 +6,25 @@ const config = require(__dirname + '/../config/config.json')[env];
 
 //db 객체 생성
 const db = {};
+/*
 const sequelize = new Sequelize(
     //원래는 일일이 데이터베이스 정보를 적어주어야 하지만, config에 정보를 저장해주었기 때문에 이렇게 작성 가능.
     config.database,
     config.username, 
     config.password, 
     config
+);
+*/
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME,               // 환경 변수 이름 수정
+  process.env.DB_USER,               // 환경 변수 이름 수정
+  process.env.DB_PASSWORD,           // 환경 변수 이름 수정
+  {
+    host: process.env.DB_HOST,       // 환경 변수 이름 수정
+    dialect: 'mysql',
+    port: process.env.DB_PORT        // 포트 추가
+  }
 );
 
 
