@@ -4,7 +4,7 @@
 /**
  * @swagger
  * paths:
- *  mypage/friend?status=recent:
+ *  /mypage/friend?status=recent:
  *   get:
  *    tags:
  *    - Friend
@@ -48,6 +48,10 @@
  *                          type: integer
  *                          description: 사용자 ID
  *                          example: 1
+ *                        friendName:
+ *                          type: String
+ *                          description: 이름
+ *                          example: "임세연"
  *                        addDate:
  *                          type: string
  *                          format: date
@@ -75,7 +79,7 @@
 /**
  * @swagger
  * paths:
- *  mypage/friend?status=name:
+ *  /mypage/friend?status=name:
  *   get:
  *    tags:
  *    - Friend
@@ -119,6 +123,10 @@
  *                          type: integer
  *                          description: 사용자 ID
  *                          example: 1
+ *                        friendName:
+ *                          type: String
+ *                          description: 이름
+ *                          example: "
  *                        addDate:
  *                          type: string
  *                          format: date
@@ -225,6 +233,10 @@
  *                          type: integer
  *                          description: 요청을 보낸 사용자 ID
  *                          example: 1
+ *                        friendName:
+ *                          type: String
+ *                          description: 이름
+ *                          example: "
  *                        requestDate:
  *                          type: string
  *                          format: date
