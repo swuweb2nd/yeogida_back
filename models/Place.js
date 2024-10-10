@@ -49,20 +49,14 @@ class Place extends Sequelize.Model {
                 type: Sequelize.STRING(100),
                 allowNull: true
             },
-            created_at: {
-                type: Sequelize.DATE,
-                defaultValue: Sequelize.NOW
-            },
-            updated_at: {
-                type: Sequelize.DATE,
-                defaultValue: Sequelize.NOW,
-                onUpdate: Sequelize.NOW
-            }
+            
         }, {
             sequelize,
             modelName: 'Place',
             tableName: 'Places',
-            timestamps: false
+            ttimestamps: true, // Sequelize의 기본 타임스탬프 필드 사용
+            underscored: true, // createdAt과 updatedAt을 snake_case로 변환
+
         });
     }
 
