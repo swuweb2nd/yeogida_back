@@ -423,16 +423,20 @@
  *                    items:
  *                      type: object
  *                      properties:
- *                        friendId:
+ *                        userId:
  *                          type: integer
- *                          description: 친구 ID
- *                          example: 1
+ *                          description: 친구의 사용자 ID
+ *                          example: 123
+ *                        userName:
+ *                          type: string
+ *                          description: 친구의 사용자 이름
+ *                          example: "홍길동"
  *                        status:
  *                          type: integer
  *                          description: "친구 상태 (1: 유효)"
  *                          example: 1
  *     500:
- *      description: 잘못된 요청
+ *      description: 서버 오류 또는 잘못된 요청
  *      content:
  *        application/json:
  *          schema:
@@ -447,6 +451,7 @@
  *                description: 오류 메시지
  *                example: "올바른 요청이 아닙니다."
  */
+
 
 
 //친구 추가 요청
