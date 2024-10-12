@@ -126,7 +126,7 @@
  *                        friendName:
  *                          type: String
  *                          description: 이름
- *                          example: "
+ *                          example: "임세연"
  *                        addDate:
  *                          type: string
  *                          format: date
@@ -215,7 +215,7 @@
  *              message:
  *                type: string
  *                description: 응답 메시지
- *                example: "친구 목록 조회가 정상적으로 이루어졌습니다."
+ *                example: "친구 요청 목록 조회가 정상적으로 이루어졌습니다."
  *              data:
  *                type: object
  *                properties:
@@ -236,7 +236,7 @@
  *                        friendName:
  *                          type: String
  *                          description: 이름
- *                          example: "
+ *                          example: "임세연"
  *                        requestDate:
  *                          type: string
  *                          format: date
