@@ -5,6 +5,9 @@ const { sequelize } = require('./models');
 
 //로그인, 로그아웃 구현을 위한 passport 모듈 연결 - sdh
 const passport = require('passport');
+//로컬로그인 전략설정파일을 불러오기 - sdh(1013)
+const passportConfig = require('./passport/localStrategy');
+passportConfig();
 
 const cookieParser = require('cookie-parser');
 
