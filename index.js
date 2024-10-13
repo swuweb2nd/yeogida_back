@@ -6,6 +6,7 @@ const { sequelize } = require('./models');
 //로그인, 로그아웃 구현을 위한 passport 모듈 연결 - sdh
 const passport = require('passport');
 
+
 const cookieParser = require('cookie-parser');
 
 //비밀번호재설정 - 쿠키관련 - CORS 설정 - sdh
