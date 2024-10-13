@@ -52,7 +52,8 @@ router.post('/reset-pw?token=${token}', isNotLoggedIn, resetpw);
 router.get('/reset-pw?token=${token}', isNotLoggedIn, pageResetPw);
 
 // GET /users/verify-id - 아이디 중복확인
-router.get('/verify-id', isNotLoggedIn, verifyid);
+router.post('/verify-id', isNotLoggedIn, verifyid);
+//get요청은 바디에 뭔갈 넣을 수 없음 post로 바꾸기
 
 // GET /users/verify-phone - 전화번호 중복확인
 router.get('/verify-phone', isNotLoggedIn, verifyphone);
