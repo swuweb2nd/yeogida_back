@@ -38,8 +38,7 @@ app.options('*', cors(corsOptions));
 
 // passport 초기화 
 app.use(passport.initialize());
-// CORS 미들웨어 적용
-app.use(cors(corsOptions));
+
 
 const port = process.env.PORT || 80;
 
