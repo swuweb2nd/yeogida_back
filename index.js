@@ -7,11 +7,6 @@ const { sequelize } = require('./models');
 const passport = require('passport');
 
 
-// index.js 또는 app.js
-const passportConfig = require('./passport/localStrategy'); // localStrategy.js 파일 경로
-passportConfig(); // passport 전략을 설정합니다.
-
-
 const cookieParser = require('cookie-parser');
 
 //비밀번호재설정 - 쿠키관련 - CORS 설정 - sdh
@@ -53,9 +48,6 @@ const port = process.env.PORT || 80;
 app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());  // 쿠키설정
-
-app.use(passport.initialize()); //passport 관련 추가 sy
-app.use(passport.session());  // 세션을 사용하는 경우
 
 app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
