@@ -6,7 +6,7 @@ const User = require('../models/user');
 
 module.exports = () => {
   passport.use(new LocalStrategy({
-    usernameField: 'user_id',
+    usernameField: 'id',  
     passwordField: 'password',
     passReqToCallback: false,
   }, async (id, password, done) => {
@@ -27,7 +27,7 @@ module.exports = () => {
       }
     } catch (error) {  // 로그인 실패 CASE 3 :서버 쪽 에러 발생 시 
       console.error(error);
-      done(error);
+      done(error, false, {message: "서버오류로 인해 로그인이 실패했습니다."});
     }
   }));
 };
