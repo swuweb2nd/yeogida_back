@@ -229,9 +229,14 @@ exports.sendnumberSignup = async(req, res, next) => {
             message: '인증번호가 발송되었습니다. 이메일을 확인해주세요.'
         });
         
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+    } catch (error) {
+        console.error('서버 에러 발생:', error.message);
+        console.error(error.stack);  // 스택 트레이스 추가 출력        
+
+        // 에러 메시지를 클라이언트로 전달
+        res.status(500).json({
+            message: "Server error: " + error.message
+        });
     }
 };
 
