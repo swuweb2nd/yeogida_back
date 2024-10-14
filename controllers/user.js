@@ -383,7 +383,7 @@ exports.findpw = async (req, res, next) => {
 
 // 아이디 중복확인
 exports.verifyid = async(req, res, next) => {
-    const { id } = req.query;   //req.query 사용 (1013수정)
+    const { id } = req.body;   //req.body사용! POST로 바꿨기 떄문sy
     try{
 		// 입력받은 id 로 기존에 가입한 회원정보가 있는지 확인
         const exUser = await User.findOne( {where: {id}});  
