@@ -208,7 +208,7 @@ exports.sendnumberSignup = async(req, res, next) => {
         }
 
         const mailOptions = {
-            from: 'yeogida@gmail.com',  // 발신자 정보
+            from: 'swuweb0320@gmail.com',  // 발신자 정보
             to: email,  // 수신자 이메일
             subject: '[여기다] 회원가입 시, 메일인증을 위한 인증번호 발송',
             text: `안녕하세요, ${name}님. 인증번호 [${code}]를 입력하세요.`,
@@ -229,9 +229,14 @@ exports.sendnumberSignup = async(req, res, next) => {
             message: '인증번호가 발송되었습니다. 이메일을 확인해주세요.'
         });
         
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+    } catch (error) {
+        console.error('서버 에러 발생:', error.message);
+        console.error(error.stack);  // 스택 트레이스 추가 출력        
+
+        // 에러 메시지를 클라이언트로 전달
+        res.status(500).json({
+            message: "Server error: " + error.message
+        });
     }
 };
 
@@ -252,7 +257,7 @@ exports.sendnumberIDPW = async(req, res, next) => {
         }
 
         const mailOptions = {
-            from: 'yeogida@gmail.com',  // 발신자 정보
+            from: 'swuweb0320@gmail.com',  // 발신자 정보
             to: email,  // 수신자 이메일
             subject: '[여기다] 인증번호 발송',
             text: `안녕하세요, ${name}님. 인증번호 [${code}]를 입력하세요.`,
@@ -355,7 +360,7 @@ exports.findpw = async (req, res, next) => {
 
         // 메일 내용 설정
         const mailOptions = {
-            from: 'yeogida@gmail.com',  // 발신자 정보
+            from: 'swuweb0320@gmail.com',  // 발신자 정보
             to: exUser.email,  // 수신자 이메일
             subject: '[여기다] 비밀번호 재설정 링크',
             text: `안녕하세요, ${exUser.name}님. 아래 링크를 클릭하여 비밀번호를 재설정해주세요.\n\n${resetUrl}`,
