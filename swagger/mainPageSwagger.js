@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /itineraries/recent:
+ * /api/main/recent:
  *   get:
  *     tags:
  *       - Itineraries
@@ -29,7 +29,7 @@
 
 /**
  * @swagger
- * /itineraries/top-destinations:
+ * /api/main/top-destinations:
  *   get:
  *     tags:
  *       - Itineraries
@@ -56,7 +56,7 @@
 
 /**
  * @swagger
- * /itineraries/search:
+ * /api/main/search:
  *   get:
  *     tags:
  *       - Itineraries
