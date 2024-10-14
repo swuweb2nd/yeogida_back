@@ -58,7 +58,7 @@ exports.logout = (res) => {
 
 //회원가입
 exports.signup = async (req, res, next) => {
-    const { id, password, passwordCheck, name, email, phonenumber, birth } = req.body;
+    const { id, password, passwordCheck, name, email, phonenumber, birth, nickname } = req.body;
     
     // 비밀번호와 비밀번호 확인이 일치하는지 검사
     if (password !== passwordCheck) {
@@ -84,9 +84,10 @@ exports.signup = async (req, res, next) => {
             email,
             phonenumber,
             birth,
+            nickname,
         });
         // 회원가입 성공 후 로그인페이지로 리다이렉트
-        return res.redirect('/login');  
+        return res.redirect('/');  
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
