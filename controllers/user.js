@@ -208,7 +208,7 @@ exports.sendnumberSignup = async(req, res, next) => {
         }
 
         const mailOptions = {
-            from: 'yeogida@gmail.com',  // 발신자 정보
+            from: 'swuweb0320@gmail.com',  // 발신자 정보
             to: email,  // 수신자 이메일
             subject: '[여기다] 회원가입 시, 메일인증을 위한 인증번호 발송',
             text: `안녕하세요, ${name}님. 인증번호 [${code}]를 입력하세요.`,
@@ -252,7 +252,7 @@ exports.sendnumberIDPW = async(req, res, next) => {
         }
 
         const mailOptions = {
-            from: 'yeogida@gmail.com',  // 발신자 정보
+            from: 'swuweb0320@gmail.com',  // 발신자 정보
             to: email,  // 수신자 이메일
             subject: '[여기다] 인증번호 발송',
             text: `안녕하세요, ${name}님. 인증번호 [${code}]를 입력하세요.`,
@@ -355,7 +355,7 @@ exports.findpw = async (req, res, next) => {
 
         // 메일 내용 설정
         const mailOptions = {
-            from: 'yeogida@gmail.com',  // 발신자 정보
+            from: 'swuweb0320@gmail.com',  // 발신자 정보
             to: exUser.email,  // 수신자 이메일
             subject: '[여기다] 비밀번호 재설정 링크',
             text: `안녕하세요, ${exUser.name}님. 아래 링크를 클릭하여 비밀번호를 재설정해주세요.\n\n${resetUrl}`,
