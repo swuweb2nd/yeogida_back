@@ -88,6 +88,9 @@ sequelize.sync({ force: false})
 // 메인 페이지 라우트 추가
 const mainPageRoutes = require('./routes/mainPageRoutes');
 app.use('/api/main', mainPageRoutes);
+// place 관련 라우트 추가
+const placeRoutes = require('./routes/placeRoutes');
+app.use('/api/itineraries', placeRoutes);
 // 여행 일정 라우트 추가
 const itineraryRoutes = require('./routes/itineraryRoutes');
 app.use('/api/itineraries', itineraryRoutes);
