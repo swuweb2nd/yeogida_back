@@ -351,11 +351,12 @@
 /**
  * @swagger
  *
- * /api/shared-itineraries/{shared-itineraries_id}/comments:
+ * /shared-itineraries/{shared-itineraries_id}/comments:
  *  post:
  *    summary: "댓글 작성"
  *    description: "특정 게시글에 댓글을 작성합니다."
- *    tags: shared-itineraries
+ *    tags:
+ *    - shared-itineraries
  *    parameters:
  *      - in: path
  *        name: shared-itineraries_id
