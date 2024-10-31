@@ -10,7 +10,7 @@ exports.searchPlaces = async (req, res) => {
     const query = req.query.query; // 검색어를 쿼리 파라미터로 받음
     try {
         const response = await axios.get('https://openapi.naver.com/v1/search/local.json', {
-            params: { query, display: 5, start: 1, sort: 'random' },
+            params: { query:query, display: 5, start: 1, sort: 'random' },
             headers: {
                 'X-Naver-Client-Id': NAVER_CLIENT_ID,
                 'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
