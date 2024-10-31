@@ -7,7 +7,7 @@ const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET;
 
 // 장소 검색 API 엔드포인트 추가
 exports.searchPlaces = async (req, res) => {
-    const query = encodeURIComponent(req.query.query); // UTF-8 인코딩
+    const query =req.query.query; // 인코딩 없이 사용
     try {
         const response = await axios.get('https://openapi.naver.com/v1/search/local.json', {
             params: { query:query, display: 5, start: 1, sort: 'random' },
