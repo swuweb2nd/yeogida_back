@@ -14,7 +14,7 @@ exports.login = (req, res, next) => {
             return next(authError);
         }
         if (!user) {
-            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            return res.status(401).json({ message: '아이디 또는 비밀번호가 일치하지 않음' }); //401에러로 수정(1031)
         }
         //로그인 성공 시 실행부분
         return req.login(user,{ session: false }, (loginError) => {
