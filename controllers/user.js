@@ -356,7 +356,7 @@ exports.findpw = async (req, res, next) => {
         
         // 해당 회원이 있으면
         // 비밀번호 재설정 URL
-        const resetUrl = `https://www.yeogida.net//reset-pw`;
+        const resetUrl = `https://www.yeogida.net//reset-pw?token=${token}`;  //이메일링크에 토큰 포함 
 
         // 메일 내용 설정
         const mailOptions = {
@@ -540,47 +540,33 @@ exports.resetpw = async (req, res, next) => {
 
 // --------------- 페이지 조회 ---------------
 
+//아이디찾기 성공 페이지  (GET)
+/*
+exports.pageIdSuccess = (req, res) => {
+    try {
+        const { by, id } = req.query; // 쿼리 파라미터에서 값 추출
 
-exports.pageLogin = (req, res) => {
-    try {  
-        res.status(200).json({ message: "로그인 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
+        // 필요한 파라미터가 있는지 확인
+        if (!id) {
+            return res.status(400).json({ message: "아이디가 제공되지 않았습니다." });
+        }
+        if (!by) {
+            return res.status(400).json({ message: "'by' 파라미터가 제공되지 않았습니다." });
+        }
+
+        // 성공 응답
+        res.status(200).json({
+            message: "아이디 찾기 페이지 조회 성공",
+            foundId: id,
+            by: by
+        });
     } catch (error) {
+        console.error("Error loading ID success page:", error);
         res.status(500).json({ message: "500 서버 오류" });
     }
-};
+};*/
 
-exports.pageSignup = (req, res) => {
-    try {  
-        res.status(200).json({ message: "회원가입 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
-    } catch (error) {
-        res.status(500).json({ message: "500 서버 오류" });
-    }
-};
-
-exports.pagePw = (req, res) => {
-    try {  
-        res.status(200).json({ message: "비밀번호찾기 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
-    } catch (error) {
-        res.status(500).json({ message: "500 서버 오류" });
-    }
-};
-
-exports.pageId = (req, res) => {
-    try {  
-        res.status(200).json({ message: "아이디찾기 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
-    } catch (error) {
-        res.status(500).json({ message: "500 서버 오류" });
-    }
-};
-
-exports.pageSignup = (req, res) => {
-    try {  
-        res.status(200).json({ message: "회원가입 페이지 조회 성공" }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
-    } catch (error) {
-        res.status(500).json({ message: "500 서버 오류" });
-    }
-};
-
+// 아이디 찾기 성공페이지 (찾은 아이디 전달)
 exports.pageIdSuccess = (req, res) => {
     try {  
         res.status(200).json({ message: "아이디찾기페이지 조회 성공", foundId: req.params.id }); // 상태 코드 200과 메시지를 JSON 형식으로 전송
@@ -589,6 +575,8 @@ exports.pageIdSuccess = (req, res) => {
     }
 };
 
+
+//비밀번호 재설정 페이지 
 exports.pageResetPw = async (req, res, next) => {  //쿠키 설정 수정0930
     const { token } = req.params; // 이메일 링크에 포함된 토큰
     try {
