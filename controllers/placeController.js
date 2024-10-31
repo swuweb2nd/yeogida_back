@@ -7,20 +7,26 @@ const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET;
 
 // 장소 검색 API 엔드포인트 추가
 exports.searchPlaces = async (req, res) => {
-    const query =req.query.query; // 인코딩 없이 사용
-    try {
-        const response = await axios.get('https://openapi.naver.com/v1/search/local.json', {
-            params: { query:query, display: 5, start: 1, sort: 'random' },
-            headers: {
-                'X-Naver-Client-Id': NAVER_CLIENT_ID,
-                'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
-            },
-        });
-        res.status(200).json(response.data.items);
-    } catch (error) {
-        console.error('Error fetching data from Naver API:', error);
-        res.status(500).json({ error: 'Failed to fetch data from Naver API' });
-    }
+    const query = req.query.query; // 인코딩 없이 사용
+    //const query = encodeURIComponent(req.query.query); // UTF-8 인코딩 적용
+try {
+    const apiUrl = 'https://openapi.naver.com/v1/search/local.json';
+    console.log(`Requesting to Naver API with URL: ${apiUrl}?query=${query}`);
+    
+    const response = await axios.get(apiUrl, {
+        params: { query: query, display: 5, start: 1, sort: 'random' },
+        headers: {
+            'X-Naver-Client-Id': NAVER_CLIENT_ID,
+            'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
+        },
+    });
+    console.log('Response from Naver API:', response.data);
+    res.status(200).json(response.data.items);
+} catch (error) {
+    console.error('Error fetching data from Naver API:', error);
+    res.status(500).json({ error: 'Failed to fetch data from Naver API' });
+}
+
 };
 
 
