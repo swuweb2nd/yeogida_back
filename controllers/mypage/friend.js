@@ -19,7 +19,7 @@ exports.fetchFriendList = async (req, res) => {
       // FriendList에서 친구 목록 조회 (Users 테이블과 조인), status가 0인 경우만 추출
       const friendList = await FriendList.findAll({
         where: {
-          status: 0 // status가 0인 데이터만 추출
+          status: 1// status가 0인 데이터만 추출
         },
         include: [{
           model: User,
@@ -59,9 +59,10 @@ exports.deleteFriend = async (req, res) => {
       const { friendId } = req.params; // URL 경로에서 friendId를 받아옴
   
       // friendId에 해당하는 데이터 삭제
-      const deletedFriend = await FriendList.destroy({
-        where: { friend_id: friendId }
-      });
+      const updatedFriend = await FriendList.update(
+        { status: 0 }, // status를 0으로 변경하여 친구 삭제 처리
+        { where: { friend_id: friendId } }
+      );
   
       if (deletedFriend) {
         // 삭제 성공 시
@@ -87,7 +88,7 @@ exports.fetchFriendRequestList = async (req, res) => {
     // FriendList에서 status가 1인 친구 요청 목록을 조회하면서, User 테이블의 이름도 함께 가져옴
     const friendRequests = await FriendList.findAll({
       where: {
-        status: 1
+        status: 2
       },
       attributes: ['friend_id', 'user_id', 'add_date'],
       include: [
@@ -144,7 +145,7 @@ exports.friendAccept = async (req, res) => {
   
       // friendId에 해당하는 친구 요청의 status를 1에서 0으로 업데이트 (승낙)
       const updatedFriend = await FriendList.update(
-        { status: 0 }, // status를 0으로 변경 (승낙 처리)
+        { status: 1 }, // status를 0으로 변경 (승낙 처리)
         { where: { friend_id: friendId } }
       );
   
@@ -169,14 +170,13 @@ exports.friendAccept = async (req, res) => {
   };
   
 //친구 요청 거절
-exports.friendReject// 친구 요청 거절
 exports.friendReject = async (req, res) => {
   try {
     const { friendId } = req.body; // 프론트에서 전달된 friendId
 
     // friendId에 해당하는 친구 요청의 status를 3으로 업데이트 (거절)
     const updatedFriend = await FriendList.update(
-      { status: 3 }, // status를 3으로 변경 (거절 처리)
+      { status: 3 }, // status를 3으로 변경=  거절
       { where: { friend_id: friendId } }
     );
 
@@ -214,7 +214,7 @@ exports.friendRequest = async (req, res) => {
       user_id: userId,  // 로그인한 사용자의 ID (친구 요청을 보낸 사람)
       friend_user_id: friendUserId,  // 친구의 userId (친구 요청을 받은 사람)
       status: 2,  // 친구 요청을 보낸 상태
-      add_date: new Date()  // 현재 날짜
+      request_date: new Date()  // 현재 날짜
     });
 
     // 2. 친구 요청을 받은 사용자의 friendList에 친구 정보 추가 (status = 1)

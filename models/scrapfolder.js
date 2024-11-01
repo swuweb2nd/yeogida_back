@@ -23,13 +23,9 @@ class ScrapFolder extends Sequelize.Model{
         type: Sequelize.STRING,
         allowNull: false
       },
-      addDate: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-      },
     }, {
       sequelize,
-      timestamps: false,
+      timestamps: true,
       underscored: false,
       modelName: 'ScrapFolder',
       tableName: 'scrapfolder',
@@ -40,7 +36,7 @@ class ScrapFolder extends Sequelize.Model{
   }
 
   static associate(db){
-    db.ScrapFolder.belongsTo(db.User, {foreinKey: 'scrapfolder_id', targetKey:'user_id'});
+    db.ScrapFolder.belongsTo(db.User, {foreignKey: 'scrapfolder_id', targetKey:'user_id'});
     db.ScrapFolder.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'scrapfolder_id' });
 
   }

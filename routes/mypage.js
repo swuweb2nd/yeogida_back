@@ -1,9 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const { verifyPassword, fetchInfo, editAccount } = require('../controllers/mypage/account'); 
+const { verifyPassword, fetchInfo, editAccount } = require('../controllers/mypage/account');
+const { fetchScrapFolder, createScrapFolder, deleteScrapFolder, editScrapFolder, fetchScrap, deleteScrap }  = require('../controllers/mypage/scrap')
 const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
-
 
 //마이페이지 접근 시 비밀번호 확인
 router.post('/account', isLoggedIn, verifyPassword);
@@ -14,48 +14,49 @@ router.get('/account', isLoggedIn, fetchInfo);
 //PUT 요청으로 개인정보 수정
 router.put('/account', isLoggedIn, editAccount);
 
-/*
+
 //친구 목록 조회(최신순)
-router.get('/friend?status=recent',);
+router.get('/friend?status=recent', isLoggedIn);
 
 //친구 목록 조회(이름순)
-router.get('/friend?status=name',);
+router.get('/friend?status=name',isLoggedIn);
 
 //친구 삭제
-router.delete('/friend/{friendId}',);
+router.delete('/friend/{friendId}',isLoggedIn);
 
 //친구요청 목록 조회
-router.get('/friend/friendrequest',);
+router.get('/friend/friendrequest',isLoggedIn);
 
 //친구 요청 승낙
-router.post('/friend/friendrequest/accept',);
+router.post('/friend/friendrequest/accept',isLoggedIn);
 
 //친구 요청 거절
-router.post('/friend/friendrequest/reject',);
+router.post('/friend/friendrequest/reject',isLoggedIn);
 
 //친구 검색
-router.get('/friend?search={friendName}',);
+router.get('/friend?search={friendName}',isLoggedIn);
 
 //친구 추가
 router.post('/friend',);
 
+
 //스크랩 폴더 목록 조회
-router.get('/scrap',);
+router.get('/scrap',isLoggedIn, fetchScrapFolder);
 
 //스크랩 폴더 생성
-router.post('/scrap/add',);
+router.post('/scrap/add',isLoggedIn, createScrapFolder);
 
 //스크랩 폴더 삭제
-router.delete('/scrap/delete/{folderId}',);
+router.delete('/scrap/delete/{folderId}',isLoggedIn, deleteScrapFolder);
 
 //스크랩 폴더 이름 수정
-router.put('/scrap/rename/{folderId}',);
+router.put('/scrap/rename/{folderId}',isLoggedIn, editScrapFolder);
 
 //일정 스크랩 목록 조회
-router.get('/scrap/{folderid}',);
+router.get('/scrap/{folderid}',isLoggedIn, fetchScrap);
 
 //일정 스크랩 삭제
-router.delete('/scrap/{folderId}/delete/{scrapId}',);
-*/
+router.delete('/scrap/{folderId}/delete/{scrapId}',isLoggedIn, deleteScrap);
+
 
 module.exports = router;
