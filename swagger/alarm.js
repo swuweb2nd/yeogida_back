@@ -2,55 +2,60 @@
 /**
  * @swagger
  * paths:
- *  /alarms:
- *   post:
- *    tags:
- *    - alarms
- *    summary: 새로운 알림 생성
- *    description: 사용자에게 새로운 알림을 생성합니다.
- *    requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *            type: object
- *            properties:
- *              user_id:
- *                type: integer
- *                description: 알림을 받는 사용자 ID
- *              itinerary_id:
- *                type: integer
- *                description: 알림과 관련된 여행 일정 ID
- *              status:
- *                type: integer
- *                description: 알림의 상태 (0: 친구 요청, 1: 여행 공유)
- *            required:
- *              - user_id
- *              - itinerary_id
- *              - status
- *    responses:
- *     201:
- *      description: 성공적으로 알림이 생성되었습니다.
- *      content:
- *        application/json:
- *          schema:
- *            type: object
- *            properties:
- *              alarm_id:
- *                type: integer
- *                example: 1
- *              user_id:
- *                type: integer
- *                example: 2
- *              itinerary_id:
- *                type: integer
- *                example: 5
- *              status:
- *                type: integer
- *                example: 0
- *     500:
- *      description: 알림 생성에 실패했습니다.
+ *   /alarms:
+ *     post:
+ *       tags:
+ *         - Alarm
+ *       summary: 새로운 알림 생성
+ *       description: 사용자에게 새로운 알림을 생성합니다.
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user_id:
+ *                   type: integer
+ *                   description: 알림을 받는 사용자 ID
+ *                 itinerary_id:
+ *                   type: integer
+ *                   description: 알림과 관련된 여행 일정 ID
+ *                 status:
+ *                   type: integer
+ *                   description: |
+ *                     알림의 상태:
+ *                     0: 친구 요청
+ *                     1: 여행 공유
+ *               required:
+ *                 - user_id
+ *                 - itinerary_id
+ *                 - status
+ *       responses:
+ *         201:
+ *           description: 성공적으로 알림이 생성되었습니다.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   alarm_id:
+ *                     type: integer
+ *                     example: 1
+ *                   user_id:
+ *                     type: integer
+ *                     example: 2
+ *                   itinerary_id:
+ *                     type: integer
+ *                     example: 5
+ *                   status:
+ *                     type: integer
+ *                     example: 0
+ *         500:
+ *           description: 알림 생성에 실패했습니다.
  */
+
+
 
 // 알림 조회
 /**
@@ -59,7 +64,7 @@
  *  /alarms/{user_id}:
  *   get:
  *    tags:
- *    - alarms
+ *    - Alarm
  *    summary: 사용자 알림 조회
  *    description: 특정 사용자의 모든 알림을 조회합니다.
  *    parameters:
@@ -100,9 +105,9 @@
  * @swagger
  * paths:
  *  /alarms/{alarm_id}:
- *   patch:
+ *   put:
  *    tags:
- *    - alarms
+ *    - Alarm
  *    summary: 알림 상태 업데이트
  *    description: 특정 알림의 상태를 업데이트합니다.
  *    parameters:
@@ -141,7 +146,7 @@
  *  /alarms/{alarm_id}:
  *   delete:
  *    tags:
- *    - alarms
+ *    - Alarm
  *    summary: 알림 삭제
  *    description: 특정 알림을 삭제합니다.
  *    parameters:
