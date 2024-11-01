@@ -1,4 +1,4 @@
-const { alarm, friendList } = require('../models');
+const { alarm, friendList, itinerary } = require('../models');
 
 // 알림 생성
 exports.createAlarm = async (req, res) => {
@@ -20,6 +20,7 @@ exports.createAlarm = async (req, res) => {
 exports.getAlarms = async (req, res) => {
   const { user_id } = req.params;
   try {
+    // 특정 사용자의 알림 조회
     const alarms = await alarm.findAll({ where: { user_id } });
     res.status(200).json(alarms);
   } catch (error) {
@@ -34,12 +35,11 @@ exports.updateAlarmStatus = async (req, res) => {
   const { status } = req.body;
 
   try {
+    // 친구 요청 수락
     if (status === 0) {
-      // 친구 요청 수락
       const friendRequest = await friendList.findOne({ where: { alarm_id } });
       if (friendRequest) {
-        // 친구 요청 수락 처리
-        await friendList.update({ status: 1 }, { where: { alarm_id } }); // 상태 업데이트
+        await friendList.update({ status: 1 }, { where: { alarm_id } }); // 친구 요청 수락
         await alarm.update({ status: 1 }, { where: { alarm_id } }); // 알림 상태 업데이트
         return res.status(200).json({ message: '친구 요청이 수락되었습니다.' });
       } else {
@@ -47,9 +47,8 @@ exports.updateAlarmStatus = async (req, res) => {
       }
     } else if (status === 1) {
       // 여행 공유 알림 수락 처리
-      const tripShare = await Trip.findOne({ where: { alarm_id } });
+      const tripShare = await itinerary.findOne({ where: { alarm_id } });
       if (tripShare) {
-        // 여행 공유 처리
         await alarm.update({ status: 2 }, { where: { alarm_id } }); // 알림 상태 업데이트
         return res.status(200).json({ message: '여행 공유 알림이 처리되었습니다.' });
       } else {
@@ -63,7 +62,6 @@ exports.updateAlarmStatus = async (req, res) => {
     res.status(500).json({ message: '알림 상태 업데이트에 실패했습니다.' });
   }
 };
-
 
 // 알림 삭제
 exports.deleteAlarm = async (req, res) => {
