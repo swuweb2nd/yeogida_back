@@ -415,6 +415,8 @@ exports.verifyid = async(req, res, next) => {
 
 // 전화번호 중복확인 
 exports.verifyphone = async(req, res, next) => {
+    console.log(`Received request on /verify-phone with body:`, req.body);
+
     const { phonenumber } = req.body;
     try{
 		// 입력받은 id 로 기존에 가입한 회원정보가 있는지 확인
