@@ -56,10 +56,7 @@ app.use(cookieParser());  // 쿠키설정
 app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
 });*/
-// 도메인에 접속하면 메인 페이지로 리다이렉트
-app.get('/', (req, res) => {
-  res.redirect('/api/main/recent');  // 메인 페이지로 리다이렉트
-});
+
 
 //GET /health 요청에 대해 상태코드 200으로 응답하는 API
 app.get('/health', (req, res) =>{
