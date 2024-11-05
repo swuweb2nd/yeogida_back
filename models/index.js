@@ -30,6 +30,7 @@ const sequelize = new Sequelize(
 
 // 모델 정의
 db.User = require('./user');
+db.UnverifiedUser = require('./unverifiedUser');
 db.Itinerary = require('./Itinerary');
 db.Place = require('./Place');
 db.Alarm = require('./alarm');  
@@ -42,6 +43,7 @@ db.Comment = require('./comment');
 
 // 모델 초기화
 db.User.initiate(sequelize);
+db.UnverifiedUser.initiate(sequelize);
 db.Itinerary.initiate(sequelize);
 db.Place.initiate(sequelize);
 db.Alarm.initiate(sequelize);
