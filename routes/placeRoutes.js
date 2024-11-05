@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const placeController = require('../controllers/placeController');
 
+// 장소 검색 API 추가 (고유한 경로로 설정)
+router.get('/places/search', placeController.searchPlaces);
+
 // 특정 여행일정에 대한 모든 여행장소 조회
 router.get('/:itinerary_id/places', placeController.getPlacesByItineraryId);
 
@@ -17,7 +20,5 @@ router.put('/places/:place_id', placeController.updatePlace);
 // 특정 여행장소 삭제
 router.delete('/places/:place_id', placeController.deletePlace);
 
-// 장소 검색 API 추가
-router.get('/search', placeController.searchPlaces);
 
 module.exports = router;

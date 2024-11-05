@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const User = require('../models/user');  //models/user.js와 연결
+const UnverifiedUser = require('../models/unverifiedUser'); //회원가입 인증전용 사용자테이블
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize'); // 0930 추가
@@ -207,6 +208,25 @@ exports.sendnumberSignup = async(req, res, next) => {
             return res.status(409).json({ message: '기존에 회원가입한 이메일입니다.' });
         }
 
+        // 임시 사용자 테이블에 이메일이 이미 존재하는지 확인 (중복 요청 방지)
+        let unverifiedUser = await UnverifiedUser.findOne({ where: { email } });
+
+        if (unverifiedUser) {
+            // 기존 기록이 있으면 인증번호와 만료 시간을 업데이트
+            await unverifiedUser.update({
+                verificationCode: code,
+                verificationExpiresAt: expiresAt,
+            });
+        } else {
+            // 새로운 임시 사용자 생성
+            await UnverifiedUser.create({
+                email,
+                name,
+                verificationCode: code,
+                verificationExpiresAt: expiresAt,
+            });
+        }
+
         const mailOptions = {
             from: 'swuweb0320@gmail.com',  // 발신자 정보
             to: email,  // 수신자 이메일
@@ -218,11 +238,6 @@ exports.sendnumberSignup = async(req, res, next) => {
         // 이메일 전송
         await transporter.sendMail(mailOptions);
 
-        // Users 테이블에 인증번호와 만료 시간 저장
-        await user.update({
-            verificationCode: code,
-            verificationExpiresAt: expiresAt
-        });
 
         // 이메일 전송 성공 시 응답
         return res.status(200).json({
@@ -415,6 +430,7 @@ exports.verifyid = async(req, res, next) => {
 
 // 전화번호 중복확인 
 exports.verifyphone = async(req, res, next) => {
+    console.log('verifyphone endpoint called');
     const { phonenumber } = req.body;
     try{
 		// 입력받은 id 로 기존에 가입한 회원정보가 있는지 확인
@@ -448,7 +464,7 @@ exports.verifynumber = async (req, res, next) => {
     const { email, code } = req.body;
 
     try {
-        const user = await User.findOne({ where: { email } });
+        const user = await UnverifiedUser.findOne({ where: { email } });
 
         if (!user) {
             return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
