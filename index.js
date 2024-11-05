@@ -20,7 +20,7 @@ const app = express();
 
 //CORS 설정 - sdh
 const corsOptions = {
-  origin: ['https://yeogida.net', 'http://localhost'],  // 허용할 프론트엔드 도메인 추가
+  origin: ['https://yeogida.net', 'http://localhost', 'https://www.yeogida.net'],  // 허용할 프론트엔드 도메인 추가
   // 허용할 프론트엔드 도메인(특정 도메인에서만 쿠키 허용하도록)
   credentials: true,  // 쿠키를 허용하려면 true로 설정
   methods: 'GET, POST, DELETE, PATCH,PUT, OPTIONS',
