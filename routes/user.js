@@ -24,8 +24,6 @@ router.post('/signup', isNotLoggedIn, signup);
 // POST /users/logout - 로그아웃하기
 router.post('/logout', isLoggedIn, logout);
 
-
-
 // POST /users/find/id - 아이디 찾기
 router.post('/find/id', isNotLoggedIn, findid);
 

@@ -28,7 +28,7 @@ exports.login = (req, res, next) => {
                 id: user.id,
                 nick: user.nickname,
             }, process.env.JWT_SECRET, {
-                expiresIn: '10m',  // 토큰 유효기간
+                expiresIn: '12h',  // 토큰 유효기간(12h으로 연장)
                 issuer: 'yeogida',  // 발급자
             });
 
