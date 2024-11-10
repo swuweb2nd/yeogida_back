@@ -15,6 +15,11 @@ const cookieParser = require('cookie-parser');
 //비밀번호재설정 - 쿠키관련 - CORS 설정 - sdh
 const cors = require('cors');
 
+//토큰삭제cron 호출 
+const deleteExpiredCodes = require('./cron/deleteExpiredCodes');
+// CronJob 시작
+deleteExpiredCodes.start();
+
 const app = express();
 
 
@@ -27,6 +32,8 @@ const corsOptions = {
 
 // CORS 미들웨어 적용
 app.use(cors(corsOptions));
+
+
 
 // 모든 응답에 대한 CORS 헤더 설정
 /*app.use((req, res, next) => {
