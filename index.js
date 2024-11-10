@@ -24,28 +24,39 @@ const app = express();
 //CORS 설정 - sdh
 const corsOptions = {
   origin: ["http://localhost", "https://www.yeogida.net"], // 허용할 프론트엔드 도메인 추가
-  // 허용할 프론트엔드 도메인(특정 도메인에서만 쿠키 허용하도록)
   credentials: true, // 쿠키를 허용하려면 true로 설정
-  methods: "GET, POST, DELETE, PATCH,PUT, OPTIONS",
+  methods: "GET, POST, DELETE, PATCH, PUT, OPTIONS",
   allowedHeaders: [
     "Content-Type",
     "Authorization",
     "X-Requested-With",
     "Accept",
-  ], // 필요한 헤더 명시적으로 설정
+    "Origin",
+    "Access-Control-Allow-Origin",
+    "Access-Control-Allow-Headers",
+  ],
 };
-
-// 모든 응답에 대한 CORS 헤더 설정
-/*app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://yeogida.net');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});*/
 
 // CORS 미들웨어 적용(passport 초기화 코드보다 앞에 설정)
 app.use(cors(corsOptions));
+
+// 모든 응답에 대한 CORS 헤더 설정
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://www.yeogida.net");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With, Accept, Origin"
+  );
+  if (req.method === "OPTIONS") {
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, DELETE, PATCH, PUT, OPTIONS"
+    );
+    return res.status(200).json({});
+  }
+  next();
+});
 
 // CORS 사전 검사 요청에 대해 응답
 app.options("*", cors(corsOptions));
