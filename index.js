@@ -27,7 +27,12 @@ const corsOptions = {
   // 허용할 프론트엔드 도메인(특정 도메인에서만 쿠키 허용하도록)
   credentials: true, // 쿠키를 허용하려면 true로 설정
   methods: "GET, POST, DELETE, PATCH,PUT, OPTIONS",
-  allowedHeaders: "*",
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+  ], // 필요한 헤더 명시적으로 설정
 };
 
 // 모든 응답에 대한 CORS 헤더 설정
