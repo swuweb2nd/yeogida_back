@@ -29,11 +29,10 @@ const corsOptions = {
   // 허용할 프론트엔드 도메인(특정 도메인에서만 쿠키 허용하도록)
   credentials: true,  // 쿠키를 허용하려면 true로 설정
   methods: 'GET, POST, DELETE, PATCH,PUT, OPTIONS',
-  allowedHeaders: 'Content-Type, Authorization',
+  allowedHeaders: '*',
 };
 
-// CORS 미들웨어 적용
-app.use(cors(corsOptions));
+
 
 
 
@@ -52,6 +51,7 @@ app.use(cors(corsOptions));
 app.use(passport.initialize());
 
 
+
 const port = process.env.PORT || 80;
 
 
@@ -60,6 +60,10 @@ app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());  // 쿠키설정
 
+
+// CORS 미들웨어 적용(passport 초기화 코드보다 앞에 설정)
+app.use(cors(corsOptions));
+
 /*
 app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
@@ -69,6 +73,8 @@ app.get('/', (req, res) => {
 app.get('/', (req, res) => {
   res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
 });*/
+
+
 // 도메인에 접속하면 메인 페이지로 리다이렉트
 app.get('/', (req, res) => {
   res.redirect('/api/main/recent');  // 메인 페이지로 리다이렉트
