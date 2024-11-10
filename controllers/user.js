@@ -36,7 +36,8 @@ exports.login = (req, res, next) => {
             // 토큰을 쿠키에 저장
             res.cookie('token', token, {
                 httpOnly: true,  // HTTP에서만 쿠키 보내도록 설정
-                secure: process.env.NODE_ENV === 'production',  // 배포모드일 때만 HTTP에서 쿠키가 전송되도록
+                //secure: process.env.NODE_ENV === 'production',  // 배포모드일 때만 HTTP에서 쿠키가 전송되도록
+                secure: true, //쿠키 설정 수정
                 maxAge: 43200000,  // 12시간 (밀리초 단위)
             });
 
