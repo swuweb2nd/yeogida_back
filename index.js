@@ -48,21 +48,6 @@ app.use(cors(corsOptions));
 // CORS 사전 검사 요청에 대해 응답
 app.options("*", cors(corsOptions));
 
-// 모든 응답에 CORS 헤더 추가gpt
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, DELETE, PATCH, PUT, OPTIONS"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With, Accept"
-  );
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
 // 정적 파일에 CORS 설정 추가
 app.use("/static", cors(corsOptions), express.static("static"));
 
