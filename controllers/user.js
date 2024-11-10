@@ -43,7 +43,7 @@ exports.login = (req, res, next) => {
             });
 
             // 메인페이지로 리다이렉트
-            return res.redirect('/');
+            return res.status(200).json({ message: '로그인 성공', token });
         });
     })(req, res, next);
 };
