@@ -30,7 +30,7 @@ exports.isLoggedIn = (req, res, next) => {
   const token = req.cookies.token; // 쿠키에 저장된 토큰을 가져옵니다
 
   if (!token) {
-      return res.status(403).send('로그인 필요'); // 토큰이 없으면 로그인 필요 응답
+      return res.status(403).send('로그인이 필요합니다.'); // 토큰이 없으면 로그인 필요 응답
   }
 
   try {
@@ -49,8 +49,7 @@ exports.isNotLoggedIn = (req, res, next) => {
 
   if (!token) {
       return next(); // 토큰이 없으면 비로그인 상태로 인식
+  } else {
+    return res.status(403).send('로그인 상태입니다. 로그아웃해주세요.'); // 토큰이 있으면 상태와 에러메시지
   }
-
-  // 이미 로그인 상태일 경우, 로그인 페이지로 리디렉션하지 말고 메인 페이지로 리디렉션
-  return res.redirect('/'); // 로그인 상태라면 메인 페이지로 리디렉션
 };
