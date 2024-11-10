@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 
 const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
-const { pageLogin,pageSignup, pagePw, pageId, pageIdSuccess, pageResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
+const { pageIdSuccess, pageResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
 const { signup, login, logout, findpw, findid, resetpw, verifyid, verifyphone, verifynumber, sendnumberSignup, sendnumberIDPW } = require('../controllers/user'); // 기능 (POST)
 
 
