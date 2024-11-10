@@ -46,8 +46,7 @@ app.use(cors(corsOptions));
   next();
 });*/
 
-// OPTIONS 요청 처리 (preflight 요청 허용)
-app.options('*', cors(corsOptions));
+
 
 // passport 초기화 
 app.use(passport.initialize());
