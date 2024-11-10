@@ -48,8 +48,10 @@ exports.isNotLoggedIn = (req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) {
-      return next(); // 토큰이 없으면 비로그인 상태로 인식
-  } else {
-    return res.status(403).send('로그인 상태입니다. 로그아웃해주세요.'); // 토큰이 있으면 상태와 에러메시지
-  }
+    return next(); // 토큰이 없으면 비로그인 상태로 인식, 다음 미들웨어로 이동
+} else {
+  // 로그인 상태일 경우 로그인 페이지로 리디렉션
+  //return res.redirect('/'); // 로그인된 상태이므로 메인 페이지로 리디렉션
+  return res.redirect('https://www.yeogida.net'); //여기다 메인으로 리디렉션 (로그인상태인데 로그인하려고할때)
+}
 };
