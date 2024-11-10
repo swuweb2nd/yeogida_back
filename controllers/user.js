@@ -39,6 +39,7 @@ exports.login = (req, res, next) => {
                 //secure: process.env.NODE_ENV === 'production',  // 배포모드일 때만 HTTP에서 쿠키가 전송되도록
                 secure: true, //쿠키 설정 수정
                 maxAge: 43200000,  // 12시간 (밀리초 단위)
+                domain: '.yeogida.net', 
             });
 
             // 메인페이지로 리다이렉트
