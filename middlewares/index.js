@@ -51,6 +51,6 @@ exports.isNotLoggedIn = (req, res, next) => {
       return next(); // 토큰이 없으면 비로그인 상태로 인식
   }
 
-  // 이미 로그인 상태이므로 에러 메시지와 함께 메인 페이지로 리디렉션
-  return res.redirect(`/?error=이미 로그인된 상태입니다.`);
+  // 이미 로그인 상태일 경우, 로그인 페이지로 리디렉션하지 말고 메인 페이지로 리디렉션
+  return res.redirect('/'); // 로그인 상태라면 메인 페이지로 리디렉션
 };
