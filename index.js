@@ -45,6 +45,9 @@ app.use(cors(corsOptions));
 // CORS 사전 검사 요청에 대해 응답
 app.options("*", cors(corsOptions));
 
+// 정적 파일에 CORS 설정 추가
+app.use("/static", cors(corsOptions), express.static("static"));
+
 //미들웨어설정
 app.use(express.json()); // 추가된 부분
 app.use(express.urlencoded({ extended: true }));
