@@ -42,7 +42,6 @@ const corsOptions = {
   ],
 };
 
-
 // CORS 미들웨어 적용(passport 초기화 코드보다 앞에 설정)
 app.use(cors(corsOptions));
 
