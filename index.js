@@ -21,6 +21,7 @@ deleteExpiredCodes.start();
 
 const app = express();
 
+/*
 //CORS 설정 - sdh
 const corsOptions = {
   origin: [
@@ -41,6 +42,24 @@ const corsOptions = {
     "Access-Control-Allow-Headers",
   ],
 };
+*/
+
+// CORS 설정 - 11.11 수정
+const corsOptions = {
+  origin: (origin, callback) => {
+    // 특정 서브도메인 허용: yeogida.net과 www.yeogida.net 모두 허용
+    const allowedOrigins = ['https://yeogida.net', 'https://www.yeogida.net', 'http://localhost'];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);  // 허용된 도메인일 경우 CORS 허용
+    } else {
+      callback(new Error('Not allowed by CORS'));  // 허용되지 않은 경우 에러 발생
+    }
+  },
+  credentials: true,  // 쿠키를 허용하려면 true로 설정
+  methods: 'GET, POST, DELETE, PATCH, PUT, OPTIONS',
+  allowedHeaders: 'Content-Type, Authorization',
+};
+
 
 // CORS 미들웨어 적용(passport 초기화 코드보다 앞에 설정)
 app.use(cors(corsOptions));
