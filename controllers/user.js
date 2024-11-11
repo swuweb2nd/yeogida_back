@@ -5,7 +5,6 @@ const UnverifiedUser = require('../models/unverifiedUser'); //회원가입 인�
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize'); // 0930 추가
-//const { verifyToken } = require('../middlewares'); // 토큰검증 미들웨어 가져오기
 
 //로그인
 exports.login = (req, res, next) => {
@@ -44,48 +43,37 @@ exports.login = (req, res, next) => {
 
 // 리프레시 토큰을 사용해 액세스 토큰 발급
 exports.refreshAccessToken = (req, res) => {
-    const refreshToken = req.cookies.refreshToken;  // 쿠키에서 리프레시 토큰을 가져옴
-  
-    if (!refreshToken) {
-      return res.status(403).json({ message: '리프레시 토큰이 없습니다.' });
-    }
-  
-    try {
-      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);  // 리프레시 토큰 검증
-  
-      // 새로운 액세스 토큰 발급
-      const accessToken = jwt.sign({ id: decoded.id, nickname: decoded.nickname }, process.env.JWT_SECRET, {
-        expiresIn: '1h',  // 액세스 토큰 유효기간
-        issuer: 'yeogida',
-      });
-  
-      return res.status(200).json({ accessToken });  // 새로운 액세스 토큰 반환
-    } catch (error) {
-      console.error(error);
-      return res.status(401).json({ message: '유효하지 않은 리프레시 토큰입니다.' });
-    }
+    const refreshToken = req.cookies.refreshToken;  // 리프레시 토큰을 쿠키에서 가져옵니다.
+
+  if (!refreshToken) {
+    return res.status(403).json("리프레시 토큰이 없습니다.");
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const userId = decoded.id;
+
+    // 새로운 액세스 토큰 발급
+    const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+      expiresIn: '12h', // 새로운 액세스 토큰의 유효기간
+      issuer: 'yeogida',
+    });
+
+    return res.status(200).json({
+      message: '액세스 토큰이 재발급되었습니다.',
+      accessToken,
+    });
+  } catch (error) {
+    return res.status(401).json("유효하지 않은 리프레시 토큰입니다.");
+  }
 };
 
-// 로그인 상태 확인 
+// 로그인 상태 확인 - 로그인된 사용자 정보 반환
 exports.getMe = (req, res) => {
-    const token = req.cookies.token;  // 쿠키에서 액세스 토큰을 가져옴
-  
-    if (!token) {
-      return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
-    }
-  
-    try {
-      // 액세스 토큰 검증
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  
-      return res.status(200).json({ user: decoded });  // 로그인한 사용자 정보 반환
-    } catch (error) {
-      if (error.name === 'TokenExpiredError') {
-        // 액세스 토큰이 만료되었으면 리프레시 토큰으로 새로운 액세스 토큰 발급
-        return res.status(401).json({ message: '액세스 토큰이 만료되었습니다. 리프레시 토큰으로 갱신합니다.' });
-      }
-      return res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
-    }
+    return res.status(200).json({
+        message: '로그인 상태 확인 성공',
+        user: req.user,  // 로그인된 유저 정보
+      });
 };
 
 //로그아웃
