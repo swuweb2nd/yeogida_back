@@ -3,7 +3,7 @@ const passport = require('passport');
 
 const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
 const { pageIdSuccess, pageResetPw } = require('../controllers/user');  //페이지 렌더링 (GET)
-const { signup, login, logout, findpw, findid, resetpw, verifyid, verifyphone, verifynumber, sendnumberSignup, sendnumberIDPW } = require('../controllers/user'); // 기능 (POST)
+const { refreshAccessToken, getMe, signup, login, logout, findpw, findid, resetpw, verifyid, verifyphone, verifynumber, sendnumberSignup, sendnumberIDPW } = require('../controllers/user'); // 기능 (POST)
 
 
 
@@ -14,6 +14,12 @@ router.use((req, res, next) => {
     //팔로잉 여부, 관리자 여부 등의 미들웨어를 만들어 활용할 수 있음. 
     next();
 });
+
+// POST /users/refresh - 리프레시 토큰을 사용하여 액세스 토큰 재발급
+router.post('/refresh', isLoggedIn, refreshAccessToken);
+
+// GET /users/me - 로그인 상태 확인
+router.get('/me', isLoggedIn, getMe);
 
 // POST /users/login - 로그인하기
 router.post('/login', isNotLoggedIn, login); 

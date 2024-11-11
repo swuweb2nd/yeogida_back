@@ -15,39 +15,78 @@ exports.login = (req, res, next) => {
             return next(authError);
         }
         if (!user) {
-            return res.status(401).json({ message: '아이디 또는 비밀번호가 일치하지 않음' }); //401에러로 수정(1031)
-        }
-        //로그인 성공 시 실행부분
-        return req.login(user,{ session: false }, (loginError) => {
-            if(loginError) {
-                console.error(loginError);
-                return next(loginError);
-            }
-            // JWT 토큰 발급
-            const token = jwt.sign({
-                id: user.id,
-                nick: user.nickname,
-            }, process.env.JWT_SECRET, {
-                expiresIn: '12h',  // 토큰 유효기간(12h으로 연장)
-                issuer: 'yeogida',  // 발급자
-            });
-
-
-            // 토큰을 쿠키에 저장
-            res.cookie('token', token, {
-                httpOnly: true,  // HTTP에서만 쿠키 보내도록 설정
-                //secure: process.env.NODE_ENV === 'production',  // 배포모드일 때만 HTTP에서 쿠키가 전송되도록
-                secure: true, //쿠키 설정 수정
-                maxAge: 43200000,  // 12시간 (밀리초 단위)
-                domain: '.yeogida.net',  // 11.11 서브도메인도 포함되도록 설정
-            });
-
-            // 메인페이지로 리다이렉트
-            return res.status(200).json({ message: '로그인 성공', token });
-        });
+            return res.status(401).json({ message: '아이디 또는 비밀번호가 일치하지 않음' });
+          }
+          //11.11 로그인 수정 
+          // 로그인 성공 후 리프레시 토큰과 액세스 토큰 발급
+          const accessToken = jwt.sign({ id: user.id, nickname: user.nickname }, process.env.JWT_SECRET, {
+            expiresIn: '1h',  // 액세스 토큰 유효기간 (1시간)
+            issuer: 'yeogida',
+          });
+      
+          const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+            expiresIn: '7d',  // 리프레시 토큰 유효기간 (7일)
+            issuer: 'yeogida',
+          });
+      
+          // 리프레시 토큰을 쿠키에 저장
+          res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // production 환경에서만 secure
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+            domain: '.yeogida.net',  // 서브도메인도 포함되도록 설정
+          });
+      
+          // 액세스 토큰을 클라이언트에 반환
+          return res.status(200).json({ message: '로그인 성공', accessToken });
     })(req, res, next);
 };
 
+// 리프레시 토큰을 사용해 액세스 토큰 발급
+exports.refreshAccessToken = (req, res) => {
+    const refreshToken = req.cookies.refreshToken;  // 쿠키에서 리프레시 토큰을 가져옴
+  
+    if (!refreshToken) {
+      return res.status(403).json({ message: '리프레시 토큰이 없습니다.' });
+    }
+  
+    try {
+      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);  // 리프레시 토큰 검증
+  
+      // 새로운 액세스 토큰 발급
+      const accessToken = jwt.sign({ id: decoded.id, nickname: decoded.nickname }, process.env.JWT_SECRET, {
+        expiresIn: '1h',  // 액세스 토큰 유효기간
+        issuer: 'yeogida',
+      });
+  
+      return res.status(200).json({ accessToken });  // 새로운 액세스 토큰 반환
+    } catch (error) {
+      console.error(error);
+      return res.status(401).json({ message: '유효하지 않은 리프레시 토큰입니다.' });
+    }
+};
+
+// 로그인 상태 확인 
+exports.getMe = (req, res) => {
+    const token = req.cookies.token;  // 쿠키에서 액세스 토큰을 가져옴
+  
+    if (!token) {
+      return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+    }
+  
+    try {
+      // 액세스 토큰 검증
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  
+      return res.status(200).json({ user: decoded });  // 로그인한 사용자 정보 반환
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        // 액세스 토큰이 만료되었으면 리프레시 토큰으로 새로운 액세스 토큰 발급
+        return res.status(401).json({ message: '액세스 토큰이 만료되었습니다. 리프레시 토큰으로 갱신합니다.' });
+      }
+      return res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
+    }
+};
 
 //로그아웃
 exports.logout = (res) => {
@@ -103,31 +142,6 @@ exports.signup = async (req, res, next) => {
 
 
 
-/*//아이디 찾기
-exports.findid = async (req, res, next) => {
-    const { name, birth, email } = req.body;
-    try{
-		    // 중복이없는 email 로 기존에 가입한 회원정보가 있는지 확인
-        const exUser = await User.findOne( {where: {email}});  
-        if (exUser) {      // 회원정보가 이미 있으면
-        
-	        // 요청온 name, birth 와 일치하는지 비교
-	        if (exUser.name == name && exUser.birth == birth){
-		        
-		        // 응답에 id를 담아 보낸다.
-		        res.render('find/id/success', {
-                Findid: id   // 프론트 -> <%= Findid %>
-            });
-	        }
-	      }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
-};
-*/
-
-
 // 이메일 전송을 위한 transporter (nodemailer) 설정
 const transporter = nodemailer.createTransport({
     service: 'Gmail',  // Gmail을 사용
@@ -137,53 +151,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-/*//비밀번호 찾기
-exports.findpw = async (req, res, next) => {
-    const { name, id, birth, email } = req.body;
-    try{
-        // 입력받은 정보가 모두 일치하는 회원이 있는지 확인
-        const exUser = await User.findOne({
-            where: {
-                email,
-                id,
-                name,
-                birth
-            }
-        });
-        if (!exUser) {  // 사용자 정보가 없을 때
-            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
-        }
 
-        // 일치하는 회원이 있으면
-
-        // 비밀번호 재설정 토큰 생성 (JWT 토큰 사용)
-        const token = jwt.sign({ id: exUser.id, email: exUser.email }, process.env.JWT_SECRET, {
-            expiresIn: '10m'  // 토큰 유효기간 10분
-        });
-
-        // 비밀번호 재설정 URL
-        const resetUrl = `(실제배포도메인)/reset-pw?token=${token}`;
-
-        // 메일 내용 설정
-        const mailOptions = {
-            from: 'yeogida@gmail.com',  // 발신자 정보
-            to: exUser.email,  // 수신자 이메일
-            subject: '[여기다] 비밀번호 재설정 링크',
-            text: `안녕하세요, ${exUser.name}님. 아래 링크를 클릭하여 비밀번호를 재설정해주세요.\n\n${resetUrl}`,
-            html: `<p>안녕하세요, ${exUser.name}님. 아래 링크를 클릭하여 비밀번호를 재설정해주세요.</p><a href="${resetUrl}">${resetUrl}</a>`
-        };
-
-        // 이메일 전송
-        await transporter.sendMail(mailOptions);
-        return res.status(200).json({
-            message: '등록된 이메일로 비밀번호 재설정 링크를 보냈습니다.'
-        });
-  
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
-};*/
 
 
 // 인증번호 전송을 위한 랜덤숫자 생성
