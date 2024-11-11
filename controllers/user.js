@@ -1,10 +1,10 @@
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const User = require("../models/user"); //models/user.js와 연결
-const UnverifiedUser = require("../models/unverifiedUser"); //회원가입 인증전용 사용자테이블
+const User = require("../models/user");
+const UnverifiedUser = require("../models/unverifiedUser");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const { Op } = require("sequelize"); // 0930 추가
+const { Op } = require("sequelize");
 
 // accessToken 검증 미들웨어
 const authenticateToken = (req, res, next) => {
@@ -21,7 +21,7 @@ const authenticateToken = (req, res, next) => {
         .status(401)
         .json({ message: "유효하지 않은 access token입니다." });
     }
-    req.user = user; // 인증된 사용자 정보를 req.user에 저장
+    req.user = user;
     next();
   });
 };
@@ -32,7 +32,6 @@ exports.login = (req, res, next) => {
     "local",
     { session: false },
     (authError, user, info) => {
-      //로그인요청이 들어오면 local 로그인전략을 수행
       if (authError) {
         console.error(authError);
         return next(authError);
@@ -43,30 +42,27 @@ exports.login = (req, res, next) => {
           .json({ message: "아이디 또는 비밀번호가 일치하지 않음" });
       }
 
-      // 로그인 성공 후 리프레시 토큰과 액세스 토큰 발급
       const accessToken = jwt.sign(
         { id: user.id, nickname: user.nickname },
         process.env.JWT_SECRET,
         {
-          expiresIn: "1h", // 액세스 토큰 유효기간 (1시간)
+          expiresIn: "1h",
           issuer: "yeogida",
         }
       );
 
       const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "7d", // 리프레시 토큰 유효기간 (7일)
+        expiresIn: "7d",
         issuer: "yeogida",
       });
 
-      // 리프레시 토큰을 쿠키에 저장
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // production 환경에서만 secure
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-        domain: ".yeogida.net", // 서브도메인도 포함되도록 설정
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        domain: ".yeogida.net",
       });
 
-      // 액세스 토큰을 클라이언트에 반환
       return res.status(200).json({ message: "로그인 성공", accessToken });
     }
   )(req, res, next);
@@ -74,50 +70,51 @@ exports.login = (req, res, next) => {
 
 // 리프레시 토큰을 사용해 액세스 토큰 발급
 exports.refreshAccessToken = (req, res) => {
-  const refreshToken = req.cookies.refreshToken; // 리프레시 토큰을 쿠키에서 가져옵니다.
+  const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
-    return res.status(403).json("리프레시 토큰이 없습니다.");
+    return res.status(403).json({ message: "리프레시 토큰이 없습니다." });
   }
 
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res
+        .status(401)
+        .json({ message: "유효하지 않은 리프레시 토큰입니다." });
+    }
+
     const userId = decoded.id;
 
-    // 새로운 액세스 토큰 발급
-    const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: "12h", // 새로운 액세스 토큰의 유효기간
+    const newAccessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
       issuer: "yeogida",
     });
 
     return res.status(200).json({
       message: "액세스 토큰이 재발급되었습니다.",
-      accessToken,
+      accessToken: newAccessToken,
     });
-  } catch (error) {
-    return res.status(401).json("유효하지 않은 리프레시 토큰입니다.");
-  }
+  });
 };
 
-// 로그인 상태 확인 - 로그인된 사용자 정보 반환
+// 로그인 상태 확인
 exports.getMe = [
   authenticateToken,
   (req, res) => {
     return res.status(200).json({
       message: "로그인 상태 확인 성공",
-      user: req.user, // 로그인된 유저 정보
+      user: req.user,
     });
   },
 ];
 
 // 로그아웃
-exports.logout = (res) => {
+exports.logout = (req, res) => {
   res.clearCookie("refreshToken", {
-    // 리프레시 토큰 쿠키를 삭제하여 로그아웃 구현
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // 배포모드
+    secure: process.env.NODE_ENV === "production",
   });
-  res.redirect("/"); //로그아웃 성공 -> 메인페이지로 redirect
+  res.status(200).json({ message: "로그아웃 성공" });
 };
 
 //회원가입
