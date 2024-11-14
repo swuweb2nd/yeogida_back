@@ -6,119 +6,65 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const { Op } = require("sequelize");
 
-// accessToken 검증 미들웨어
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
-    return res.status(403).json({ message: "Access token이 없습니다." });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res
-        .status(401)
-        .json({ message: "유효하지 않은 access token입니다." });
-    }
-    req.user = user;
-    next();
-  });
-};
-
-// 로그인
+//로그인 
 exports.login = (req, res, next) => {
-  passport.authenticate(
-    "local",
-    { session: false },
-    (authError, user, info) => {
+  passport.authenticate('local', {session : false}, (authError, user, info) => { //로그인요청이 들어오면 local 로그인전략을 수행 
       if (authError) {
-        console.error(authError);
-        return next(authError);
+          console.error(authError);
+          return next(authError);
       }
       if (!user) {
-        return res
-          .status(401)
-          .json({ message: "아이디 또는 비밀번호가 일치하지 않음" });
+          return res.status(401).json({ message: '아이디 또는 비밀번호가 일치하지 않음' }); //401에러로 수정(1031)
       }
+      //로그인 성공 시 실행부분
+      return req.login(user,{ session: false }, (loginError) => {
+          if(loginError) {
+              console.error(loginError);
+              return next(loginError);
+          }
+          
+          // JWT 토큰 발급
+          const token = jwt.sign({
+              id: user.id,
+              nick: user.nickname,
+          }, process.env.JWT_SECRET, {
+              expiresIn: '12h',  // 토큰 12시간 만료
+              issuer: 'yeogida',  // 발급자
+          });
 
-      const accessToken = jwt.sign(
-        { id: user.id, nickname: user.nickname },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "1h",
-          issuer: "yeogida",
-        }
-      );
 
-      const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-        issuer: "yeogida",
+          // 로그인성공 - 토큰전달
+          return res.status(200).json({ message: '로그인 성공', token });
       });
-
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        domain: ".yeogida.net",
-      });
-
-      return res.status(200).json({ message: "로그인 성공", accessToken });
-    }
-  )(req, res, next);
+  })(req, res, next);
 };
 
-// 리프레시 토큰을 사용해 액세스 토큰 발급
-exports.refreshAccessToken = (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
-
-  if (!refreshToken) {
-    return res.status(403).json({ message: "리프레시 토큰이 없습니다." });
-  }
-
-  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res
-        .status(401)
-        .json({ message: "유효하지 않은 리프레시 토큰입니다." });
-    }
-
-    const userId = decoded.id;
-
-    const newAccessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-      issuer: "yeogida",
-    });
-
-    return res.status(200).json({
-      message: "액세스 토큰이 재발급되었습니다.",
-      accessToken: newAccessToken,
-    });
-  });
-};
-
-// 로그인 상태 확인
-exports.getMe = [
-  authenticateToken,
-  (req, res) => {
-    return res.status(200).json({
-      message: "로그인 상태 확인 성공",
-      user: req.user,
-    });
-  },
-];
 
 // 로그아웃
 exports.logout = (req, res) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-  });
-  res.status(200).json({ message: "로그아웃 성공" });
+
+  const token = req.cookies.token;
+  // 토큰이 없을 경우
+  if (!token) {
+      res.status(400).json({ message: '토큰이 없습니다. 로그인 상태를 확안하세요.' });
+      return;
+  }
+  // 토큰이 정상적인 토큰이 아닌 경우
+  const decoded = jwt.decode(token);
+  if (!decoded) {
+      res.status(401).json({ message: '잘못된 토큰입니다. 로그인 상태를 확인하세요.' });
+      return;
+  }
+  // 쿠키 삭제
+  res.clearCookie('token');
+  res.json({ message: '로그아웃 되었습니다.' });
 };
 
+
+
+
 //회원가입
-exports.signup = async (req, res, next) => {
+exports.signup = async (req, res) => {
   const {
     id,
     password,
@@ -170,8 +116,8 @@ exports.signup = async (req, res, next) => {
 const transporter = nodemailer.createTransport({
   service: "Gmail", // Gmail을 사용
   auth: {
-    user: process.env.EMAIL_USER, // 이메일 계정 - 추후 생성
-    pass: process.env.EMAIL_PASS, // 이메일 계정 비밀번호 - 추후 생성
+    user: process.env.EMAIL_USER, // 이메일 계정 
+    pass: process.env.EMAIL_PASS, // 이메일 계정 비밀번호 
   },
 });
 
