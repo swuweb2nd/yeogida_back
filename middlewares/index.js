@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-/*
+
 // 로그인 상태 관련 미들웨어(1106수정)
 exports.isLoggedIn = (req, res, next) => {
   const token = req.cookies.token;
@@ -34,27 +34,4 @@ exports.isNotLoggedIn = (req, res, next) => {
     //return res.redirect('https://www.yeogida.net'); //메인으로 이동 - 리디렉션으로 로그인방지
     return res.status(403).json({ message: "이미 로그인된 상태입니다." });
   }
-};*/
-
-// 토큰 검증 (로그인 상태 검증) 
-exports.tokenVerify = (req, res, next) => {
-  // 요청 헤더에서 토큰을 가져오기
-  const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
-
-  // 토큰이 없는 경우 로그인 상태 아님
-  if (!token) {
-      return res.status(401).json({ message: '로그인되지 않은 사용자입니다.' });
-  }
-
-  // 토큰 검증
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-          // 유효하지 않은 토큰일 경우
-          return res.status(401).json({ message: '유효하지 않은 토큰입니다. 다시 로그인하세요.' });
-      }
-
-      // 유효한 토큰일 경우, 유저 정보 저장
-      req.user = decoded; // id, nickname 등 토큰에 포함된 정보 저장
-      next(); // 다음 미들웨어 또는 컨트롤러로 이동
-  });
 };
