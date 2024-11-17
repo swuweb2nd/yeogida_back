@@ -6,25 +6,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const { Op } = require("sequelize");
 
-// accessToken 검증 미들웨어
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) {
-    return res.status(403).json({ message: "Access token이 없습니다." });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res
-        .status(401)
-        .json({ message: "유효하지 않은 access token입니다." });
-    }
-    req.user = user;
-    next();
-  });
-};
 
 // 로그인
 exports.login = (req, res, next) => {
@@ -42,80 +24,57 @@ exports.login = (req, res, next) => {
           .json({ message: "아이디 또는 비밀번호가 일치하지 않음" });
       }
 
-      const accessToken = jwt.sign(
-        { id: user.id, nickname: user.nickname },
+      const token = jwt.sign(
+        { user_id: user.user_id, name: user.name },  //user_id, name을 토큰에 저장
         process.env.JWT_SECRET,
         {
-          expiresIn: "1h",
+          expiresIn: "12h",  //토큰 12시간 만료
           issuer: "yeogida",
         }
       );
-
-      const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-        issuer: "yeogida",
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        domain: ".yeogida.net",
-      });
-
-      return res.status(200).json({ message: "로그인 성공", accessToken });
+      return res.status(200).json({ message: "로그인 성공", token });
+    
     }
   )(req, res, next);
 };
 
-// 리프레시 토큰을 사용해 액세스 토큰 발급
-exports.refreshAccessToken = (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
-
-  if (!refreshToken) {
-    return res.status(403).json({ message: "리프레시 토큰이 없습니다." });
+/*
+// (중복함수) 토큰검증함수
+const verifyToken = (req) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    throw new Error("토큰이 제공되지 않았습니다.");
   }
+  return jwt.verify(token, process.env.JWT_SECRET);
+};*/
 
-  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res
-        .status(401)
-        .json({ message: "유효하지 않은 리프레시 토큰입니다." });
-    }
 
-    const userId = decoded.id;
-
-    const newAccessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-      issuer: "yeogida",
-    });
-
-    return res.status(200).json({
-      message: "액세스 토큰이 재발급되었습니다.",
-      accessToken: newAccessToken,
-    });
-  });
-};
-
-// 로그인 상태 확인
-exports.getMe = [
-  authenticateToken,
-  (req, res) => {
+/* // 로그인 상태 검증
+exports.checkLoginStatus = (req, res) => {
+  try {
+    const decoded = verifyToken(req);
     return res.status(200).json({
       message: "로그인 상태 확인 성공",
-      user: req.user,
+      user: { user_id: decoded.user_id, name: decoded.name },
     });
-  },
-];
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ message: error.message });
+  }
+}; */
 
 // 로그아웃
 exports.logout = (req, res) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-  });
-  res.status(200).json({ message: "로그아웃 성공" });
+  try {
+    verifyToken(req); // 토큰 검증만 수행
+    return res.status(200).json({ message: "로그아웃 성공" });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ message: "로그아웃 실패" });
+  }
 };
+
+
 
 //회원가입
 exports.signup = async (req, res, next) => {
