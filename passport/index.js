@@ -2,6 +2,7 @@ const passport = require('passport');
 const local = require ('./localStrategy');
 const User = require('../models/user');
 
+
 // JWT토큰 사용으로 세션은 사용하지 않기 때문에 비활성화
 /*
 module.exports = () => {

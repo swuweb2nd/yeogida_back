@@ -1,21 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const itineraryController = require('../controllers/itineraryController');
-const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
+const { verifyToken } = require('../middlewares');
 
 // 전체 여행일정 조회
-router.get('/', isLoggedIn, itineraryController.getItineraries);
+router.get('/', verifyToken, itineraryController.getItineraries);
 
 // 새로운 여행일정 생성
-router.post('/', isLoggedIn, itineraryController.createItinerary);
+router.post('/', verifyToken, itineraryController.createItinerary);
 
 // 특정 여행일정 조회
-router.get('/:itinerary_id', isLoggedIn, itineraryController.getItineraryById);
+router.get('/:itinerary_id', verifyToken, itineraryController.getItineraryById);
 
 // 특정 여행일정 수정
-router.put('/:itinerary_id', isLoggedIn, itineraryController.updateItinerary);
+router.put('/:itinerary_id', verifyToken, itineraryController.updateItinerary);
 
 // 특정 여행일정 삭제
-router.delete('/:itinerary_id', isLoggedIn, itineraryController.deleteItinerary);
+router.delete('/:itinerary_id', verifyToken, itineraryController.deleteItinerary);
 
 module.exports = router;
