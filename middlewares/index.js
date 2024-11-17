@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 
+/*
 // 로그인 상태 관련 미들웨어(1106수정)
 exports.isLoggedIn = (req, res, next) => {
   const token = req.cookies.token;
@@ -33,5 +34,35 @@ exports.isNotLoggedIn = (req, res, next) => {
     //return res.redirect('/'); // 로그인된 상태이므로 메인 페이지로 리디렉션
     //return res.redirect('https://www.yeogida.net'); //메인으로 이동 - 리디렉션으로 로그인방지
     return res.status(403).json({ message: "이미 로그인된 상태입니다." });
+  }
+};
+*/
+
+exports.verifyToken = (req, res, next) => {
+  try {
+      const authHeader = req.headers['authorization'];
+
+      //헤더가 Bearer 형식인지 검증 
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({ message: '유효하지 않은 인증 헤더입니다.' });
+      }
+
+      const token = authHeader.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      res.locals.decoded = decoded;
+
+      return next(); 
+  } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+          return res.status(419).json({
+              code: 419,
+              message: '토큰이 만료되었습니다',
+          });
+      }
+      return res.status(401).json({
+          code: 401,
+          message: '유효하지 않은 토큰입니다',
+      });
   }
 };
