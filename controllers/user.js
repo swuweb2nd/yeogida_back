@@ -38,7 +38,7 @@ exports.login = (req, res, next) => {
   )(req, res, next);
 };
 
-/*
+
 // (중복함수) 토큰검증함수
 const verifyToken = (req) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -46,22 +46,9 @@ const verifyToken = (req) => {
     throw new Error("토큰이 제공되지 않았습니다.");
   }
   return jwt.verify(token, process.env.JWT_SECRET);
-};*/
+};
 
 
-/* // 로그인 상태 검증
-exports.checkLoginStatus = (req, res) => {
-  try {
-    const decoded = verifyToken(req);
-    return res.status(200).json({
-      message: "로그인 상태 확인 성공",
-      user: { user_id: decoded.user_id, name: decoded.name },
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(401).json({ message: error.message });
-  }
-}; */
 
 // 로그아웃
 exports.logout = (req, res) => {
