@@ -14,7 +14,7 @@ class UnverifiedUser extends Sequelize.Model {
       },
     //사용자 이메일
       email: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true, // 이메일을 고유 속성으로 설정
       },
