@@ -8,7 +8,7 @@ const sharedItinerariesRoutes = express.Router();
 const { isLoggedIn, isNotLoggedIn} = require('../middlewares');
 
 // 공유된 일정 목록 조회 (최신순/인기순)
-sharedItinerariesRoutes.get('/', sharedItinerary.getSharedItineraries);
+sharedItinerariesRoutes.get('/', isLoggedIn,sharedItinerary.getSharedItineraries);
 
 // 특정 공유 일정 상세 조회
 sharedItinerariesRoutes.get('/:shared_itineraries_id', isLoggedIn, sharedItinerary.getSharedItineraryById);
