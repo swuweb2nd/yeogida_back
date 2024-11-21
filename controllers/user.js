@@ -102,8 +102,9 @@ exports.signup = async (req, res, next) => {
       birth,
       nickname,
     });
-    // 회원가입 성공 후 로그인페이지로 리다이렉트
-    return res.redirect("/");
+    // 회원가입 성공 후 json반환
+    return res.status(200).json({ message: "회원가입 성공" });
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
