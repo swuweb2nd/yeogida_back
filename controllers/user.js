@@ -78,12 +78,12 @@ exports.signup = async (req, res, next) => {
 
   // 비밀번호와 비밀번호 확인이 일치하는지 검사
   if (password !== passwordCheck) {
-    return res.redirect("/signup?error=passwordsNotMatch"); // 비밀번호 불일치 시 에러 처리
+    return res.status(400).json({ message: "비밀번호가 서로 일치하지 않습니다." });
   }
   try {
     const exUser = await User.findOne({ where: { email } }); //email로 기존에 가입한 회원정보가 있는지 확인 (이메일중복확인)
     if (exUser) {
-      return res.redirect("/signup?error=exist"); // 기존가입한 회원정보가 있으면, 에러 처리
+      return res.status(409).json({ message: "이미 존재하는 회원정보 입니다." });
     }
 
     // 재입력한 비밀번호가 서로 일치하고, 이메일의 중복이 없으면
@@ -104,7 +104,7 @@ exports.signup = async (req, res, next) => {
     });
     // 회원가입 성공 후 json반환
     return res.status(200).json({ message: "회원가입 성공" });
-    
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
