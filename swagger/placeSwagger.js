@@ -30,24 +30,8 @@
  *                 $ref: '#/components/schemas/Place'
  *       404:
  *         description: 여행장소를 찾을 수 없음
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Places not found for the given itinerary_id
  *       500:
  *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to retrieve places
  */
 
 /**
@@ -73,30 +57,10 @@
  *     responses:
  *       201:
  *         description: 생성 성공
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Place'
  *       400:
  *         description: 잘못된 요청
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Invalid request body
  *       500:
  *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to create place
  */
 
 /**
@@ -122,24 +86,8 @@
  *               $ref: '#/components/schemas/Place'
  *       404:
  *         description: 여행장소를 찾을 수 없음
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Place not found
  *       500:
  *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to retrieve place
  */
 
 /**
@@ -165,40 +113,12 @@
  *     responses:
  *       200:
  *         description: 수정 성공
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Place'
  *       400:
  *         description: 잘못된 요청
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Invalid request body
  *       404:
  *         description: 여행장소를 찾을 수 없음
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Place not found
  *       500:
  *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to update place
  */
 
 /**
@@ -220,25 +140,10 @@
  *         description: 삭제 성공
  *       404:
  *         description: 여행장소를 찾을 수 없음
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Place not found
  *       500:
  *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to delete place
  */
+
 /**
  * @swagger
  * /api/places/search:
@@ -290,22 +195,7 @@
  *                     description: "장소의 Y 좌표 (지도에서의 위치)"
  *       400:
  *         description: "잘못된 요청 (쿼리 파라미터가 없음)"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Invalid query parameter"
  *       500:
- *         description: "서버 오류"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Failed to fetch data from Naver API"
+ *         description: 서버 오류
  */
+

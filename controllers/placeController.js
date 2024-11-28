@@ -45,12 +45,34 @@ exports.getPlacesByItineraryId = async (req, res) => {
     }
 };
 
+/*
 // 특정 여행일정에 새로운 여행장소 추가
 exports.createPlace = async (req, res) => {
     try {
         const place = await Place.create({
             ...req.body,
             itinerary_id: req.params.itinerary_id
+        });
+        res.status(201).json(place);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create place' });
+    }
+};
+*/
+
+// 특정 여행일정에 새로운 여행장소 추가
+exports.createPlace = async (req, res) => {
+    try {
+        const { itinerary_id } = req.params;
+        const { place_name, address, latitude, longitude, visitdate, contents } = req.body;
+        const place = await Place.create({
+            itinerary_id,
+            place_name,
+            address,
+            latitude,
+            longitude,
+            visitdate,
+            contents,
         });
         res.status(201).json(place);
     } catch (error) {
@@ -100,3 +122,28 @@ exports.deletePlace = async (req, res) => {
         res.status(500).json({ error: 'Failed to delete place' });
     }
 };
+
+// 특정 여행일정의 글 작성/수정
+exports.updateDescription = async (req, res) => {
+    try {
+        const { itinerary_id } = req.params;
+        const { description } = req.body;
+
+        if (!description) {
+            return res.status(400).json({ error: 'Description is required.' });
+        }
+
+        const itinerary = await Itinerary.findByPk(itinerary_id);
+        if (!itinerary) {
+            return res.status(404).json({ error: 'Itinerary not found' });
+        }
+
+        itinerary.description = description;
+        await itinerary.save();
+
+        res.status(200).json(itinerary);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update itinerary description' });
+    }
+};
+
