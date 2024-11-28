@@ -55,7 +55,7 @@ app.use(cookieParser());
 // Passport 초기화
 app.use(passport.initialize());
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
 
 // 메인 페이지 리다이렉트 문제 해결
 // 리다이렉트를 제거하고 JSON 응답 반환
