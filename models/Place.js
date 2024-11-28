@@ -54,7 +54,7 @@ class Place extends Sequelize.Model {
             sequelize,
             modelName: 'Place',
             tableName: 'Places',
-            ttimestamps: true, // Sequelize의 기본 타임스탬프 필드 사용
+            timestamps: true, // Sequelize의 기본 타임스탬프 필드 사용
             underscored: true, // createdAt과 updatedAt을 snake_case로 변환
 
         });
