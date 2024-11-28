@@ -46,7 +46,7 @@ app.options('*', cors(corsOptions));
 app.use(passport.initialize());
 
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3000;
 
 
 //미들웨어설정 
