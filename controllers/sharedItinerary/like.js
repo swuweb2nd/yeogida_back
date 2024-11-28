@@ -4,7 +4,7 @@ const Itinerary = require('../../models/Itinerary');
 exports.addLike = async (req, res) => {
     const { shared_itineraries_id } = req.params;
     try {
-        const itinerary = await Itinerary.findByPk(shared_itineraries_id);
+        const itinerary = await Itinerary.findOne({ where: { itinerary_id: shared_itineraries_id } });
         if (itinerary) {
             itinerary.likenumber += 1;
             await itinerary.save();
@@ -21,7 +21,7 @@ exports.addLike = async (req, res) => {
 exports.removeLike = async (req, res) => {
     const { shared_itineraries_id } = req.params;
     try {
-        const itinerary = await Itinerary.findByPk(shared_itineraries_id);
+        const itinerary = await Itinerary.findOne({ where: { itinerary_id: shared_itineraries_id } });
         if (itinerary) {
             itinerary.likenumber = Math.max(0, itinerary.likenumber - 1);
             await itinerary.save();
