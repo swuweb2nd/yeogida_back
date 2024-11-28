@@ -22,5 +22,8 @@ router.put('/places/:place_id',verifyToken, placeController.updatePlace);
 // 특정 여행장소 삭제
 router.delete('/places/:place_id',verifyToken, placeController.deletePlace);
 
+// 특정 여행일정의 글 작성/수정
+router.patch('/:itinerary_id/description', verifyToken, placeController.updateDescription);
+
 
 module.exports = router;

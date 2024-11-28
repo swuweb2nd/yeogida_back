@@ -25,7 +25,7 @@ const options = {
                     properties: {
                         place_id: {
                             type: "integer",
-                            description: "장소 ID",
+                            description: "DB 내 고유 장소 ID",
                             example: 1
                         },
                         name: {
@@ -33,10 +33,22 @@ const options = {
                             description: "장소 이름",
                             example: "에펠탑"
                         },
-                        location: {
+                        address: {
                             type: "string",
-                            description: "장소 위치",
+                            description: "장소 주소",
                             example: "파리, 프랑스"
+                        },
+                        latitude: {
+                            type: "number",
+                            format: "float",
+                            description: "위도 좌표",
+                            example: 48.858844
+                        },
+                        longitude: {
+                            type: "number",
+                            format: "float",
+                            description: "경도 좌표",
+                            example: 2.294351
                         },
                         description: {
                             type: "string",
@@ -49,7 +61,7 @@ const options = {
                             example: 2
                         }
                     },
-                    required: ["name", "location", "itinerary_id"]
+                    required: ["name", "address", "latitude", "longitude", "itinerary_id"]
                 },
                 Itinerary: {
                     type: "object",
