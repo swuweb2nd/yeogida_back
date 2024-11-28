@@ -3,111 +3,89 @@ require("dotenv").config();
 
 const { sequelize } = require("./models");
 
-//로그인, 로그아웃 구현을 위한 passport 모듈 연결 - sdh
+// Passport 설정
 const passport = require("passport");
-//로컬로그인 전략설정파일을 불러오기 - sdh(1013)
 const passportConfig = require("./passport/localStrategy");
 passportConfig();
 
 const cookieParser = require("cookie-parser");
-
-//비밀번호재설정 - 쿠키관련 - CORS 설정 - sdh
 const cors = require("cors");
-
-//토큰삭제cron 호출
 const deleteExpiredCodes = require("./cron/deleteExpiredCodes");
+
 // CronJob 시작
 deleteExpiredCodes.start();
 
 const app = express();
 
-/*
-//CORS 설정 - sdh
-const corsOptions = {
-  origin: [
-    "http://localhost",
-    "https://www.yeogida.net",
-    "https://yeogida.net",
-  ], // 허용할 프론트엔드 도메인 추가
-  credentials: true, // 쿠키를 허용하려면 true로 설정
-  methods: "GET, POST, DELETE, PATCH, PUT, OPTIONS",
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
-    "X-Requested-With",
-    "Accept",
-    "Origin",
-    "Access-Control-Allow-Credentials",
-    "Access-Control-Allow-Origin",
-    "Access-Control-Allow-Headers",
-  ],
-};
-*/
-
-// CORS 설정 - 11.11 수정
+// CORS 설정 - Origin이 없거나 null일 경우도 허용하도록 개선
 const corsOptions = {
   origin: (origin, callback) => {
-    // 특정 서브도메인 허용: yeogida.net과 www.yeogida.net 모두 허용
-    const allowedOrigins = ['https://yeogida.net', 'https://www.yeogida.net', 'http://localhost'];
+    const allowedOrigins = [
+      "https://yeogida.net",
+      "https://www.yeogida.net",
+      "http://localhost",
+    ];
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);  // 허용된 도메인일 경우 CORS 허용
+      // Origin이 없거나 허용된 도메인일 경우 허용
+      callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));  // 허용되지 않은 경우 에러 발생
+      // Origin이 허용되지 않은 경우 에러 반환
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true,  // 쿠키를 허용하려면 true로 설정
-  methods: 'GET, POST, DELETE, PATCH, PUT, OPTIONS',
-  allowedHeaders: 'Content-Type, Authorization',
+  credentials: true, // 쿠키 허용
+  methods: "GET, POST, DELETE, PATCH, PUT, OPTIONS",
+  allowedHeaders: "Content-Type, Authorization",
 };
 
-
-// CORS 미들웨어 적용(passport 초기화 코드보다 앞에 설정)
+// CORS 설정 적용
 app.use(cors(corsOptions));
 
-// CORS 사전 검사 요청에 대해 응답
+// OPTIONS 요청에 대한 CORS 응답 처리
 app.options("*", cors(corsOptions));
 
-// 정적 파일에 CORS 설정 추가
+// 정적 파일 요청에 CORS 적용
 app.use("/static", cors(corsOptions), express.static("static"));
 
-//미들웨어설정
-app.use(express.json()); // 추가된 부분
+// Express 미들웨어 설정
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); // 쿠키설정
+app.use(cookieParser());
 
-// passport 초기화
+// Passport 초기화
 app.use(passport.initialize());
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3000;
 
-/*
-app.get('/', (req, res) => {
-  res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
-});*/
-
-/*
-app.get('/', (req, res) => {
-  res.send('소프트웨어융합학과 소학회 SWUWEB TEAMB YEOGIDA 입니다.');
-});*/
-
-// 도메인에 접속하면 메인 페이지로 리다이렉트
+// 메인 페이지 리다이렉트 문제 해결
+// 리다이렉트를 제거하고 JSON 응답 반환
 app.get("/", (req, res) => {
-  res.redirect("/api/main/recent"); // 메인 페이지로 리다이렉트
+  res.status(200).json({ message: "Welcome to Yeogida!" });
 });
 
-//GET /health 요청에 대해 상태코드 200으로 응답하는 API
+// Health Check API
 app.get("/health", (req, res) => {
   res.status(200).send("Success HealthCheck");
 });
 
+// API 라우터 설정
 app.use("/users", require("./routes/user"));
-app.use("/mypage", require("./routes/mypage")); //mypage로 들어왔을 때 routes의 mypage파일로
+app.use("/mypage", require("./routes/mypage"));
 app.use("/sharedItinerary", require("./routes/sharedItinerariesRoutes"));
+app.use("/api/main", require("./routes/mainPageRoutes"));
+app.use("/api", require("./routes/placeRoutes"));
+app.use("/api/itineraries", require("./routes/itineraryRoutes"));
 
+// Swagger 설정
+const { swaggerUi, specs } = require("./swagger/swagger");
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+// 서버 시작
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
+// 데이터베이스 연결
 sequelize
   .sync({ force: false })
   .then(() => {
@@ -116,20 +94,3 @@ sequelize
   .catch((err) => {
     console.error(err);
   });
-
-// 메인 페이지 라우트 추가
-const mainPageRoutes = require("./routes/mainPageRoutes");
-app.use("/api/main", mainPageRoutes);
-// place 관련 라우트 추가
-const placeRoutes = require("./routes/placeRoutes");
-app.use("/api", placeRoutes);
-// 여행 일정 라우트 추가
-const itineraryRoutes = require("./routes/itineraryRoutes");
-app.use("/api/itineraries", itineraryRoutes);
-
-//swagger 설정 관련 코드
-// swagger.js 파일에서 가져옴
-const { swaggerUi, specs } = require("./swagger/swagger");
-// Swagger UI 경로 설정
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
-//swagger 설정 코드 끝
