@@ -8,6 +8,28 @@ const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET;
 // 장소 검색 API 엔드포인트 추가
 exports.searchPlaces = async (req, res) => {
     const query = req.query.query; // 인코딩 없이 사용
+    console.log('🛠️ Searching places with query:', query);
+
+    try {
+        const apiUrl = 'https://openapi.naver.com/v1/search/local.json';
+        const response = await axios.get(apiUrl, {
+            params: { query: query, display: 5, start: 1, sort: 'random' },
+            headers: {
+                'X-Naver-Client-Id': NAVER_CLIENT_ID,
+                'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
+            },
+        });
+        console.log('📍 Response from Naver API:', response.data);
+        res.status(200).json(response.data.items);
+    } catch (error) {
+        console.error('❌ Error fetching data from Naver API:', error.message);
+        res.status(500).json({ error: 'Failed to fetch data from Naver API' });
+    }
+};
+
+/*
+exports.searchPlaces = async (req, res) => {
+    const query = req.query.query; // 인코딩 없이 사용
     //const query = encodeURIComponent(req.query.query); // UTF-8 인코딩 적용
 try {
     const apiUrl = 'https://openapi.naver.com/v1/search/local.json';
@@ -28,10 +50,33 @@ try {
 }
 
 };
-
-
+*/
 
 // 특정 여행일정에 대한 모든 여행장소 조회
+exports.createPlace = async (req, res) => {
+    try {
+        const { itinerary_id } = req.params;
+        const { place_name, address, latitude, longitude, visitdate, contents } = req.body;
+
+        console.log('🛠️ Creating place for itinerary:', req.body);
+
+        const place = await Place.create({
+            itinerary_id,
+            place_name,
+            address,
+            latitude,
+            longitude,
+            visitdate,
+            contents,
+        });
+
+        res.status(201).json(place);
+    } catch (error) {
+        console.error('❌ Failed to create place:', error.message);
+        res.status(500).json({ error: 'Failed to create place' });
+    }
+};
+/*
 exports.getPlacesByItineraryId = async (req, res) => {
     try {
         const places = await Place.findAll({ where: { itinerary_id: req.params.itinerary_id } });
@@ -44,6 +89,7 @@ exports.getPlacesByItineraryId = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve places' });
     }
 };
+*/
 
 /*
 // 특정 여행일정에 새로운 여행장소 추가

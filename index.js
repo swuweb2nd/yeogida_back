@@ -76,6 +76,9 @@ app.use("/api/main", require("./routes/mainPageRoutes"));
 app.use("/api", require("./routes/placeRoutes"));
 app.use("/api/itineraries", require("./routes/itineraryRoutes"));
 
+const imageRoutes = require('./routes/imageRoutes'); // 이미지 라우터 불러오기
+app.use('/images', imageRoutes);
+
 // Swagger 설정
 const { swaggerUi, specs } = require("./swagger/swagger");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));

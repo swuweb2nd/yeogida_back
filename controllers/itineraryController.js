@@ -131,14 +131,83 @@ exports.getItineraries = async (req, res) => {
 // 새로운 여행일정 생성
 exports.createItinerary = async (req, res) => {
     try {
+        const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
+
+        // 이미지 URL이 없다면 기본 이미지 사용
+        const finalThumbnail = thumbnail || 'https://example.com/default-thumbnail.jpg'; // 기본 이미지 URL
+
+        console.log('🛠️ Creating itinerary:', req.body);
+
+        const itinerary = await Itinerary.create({
+            user_id: req.user.id, // JWT 토큰으로부터 가져오는 사용자 ID
+            title,
+            startdate,
+            enddate,
+            destination,
+            public_private,
+            description,
+            thumbnail: finalThumbnail, // 이미지 URL을 저장
+        });
+
+        res.status(201).json(itinerary);
+    } catch (error) {
+        console.error('❌ Failed to create itinerary:', error.message);
+        res.status(500).json({ error: `Failed to create itinerary: ${error.message}` });
+    }
+};
+/*
+exports.createItinerary = async (req, res) => {
+    try {
+        const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
+
+        console.log('🛠️ Creating itinerary:', req.body);
+
+        const itinerary = await Itinerary.create({
+            user_id: req.user.id, // JWT 토큰으로부터 가져오는 사용자 ID
+            title,
+            startdate,
+            enddate,
+            destination,
+            public_private,
+            description,
+            thumbnail, // 클라이언트에서 전달받은 이미지 URL 저장
+        });
+
+        res.status(201).json(itinerary);
+    } catch (error) {
+        console.error('❌ Failed to create itinerary:', error.message);
+        res.status(500).json({ error: `Failed to create itinerary: ${error.message}` });
+    }
+};
+*/
+
+/*
+exports.createItinerary = async (req, res) => {
+    try {
         const itinerary = await Itinerary.create(req.body);
         res.status(201).json(itinerary);
     } catch (error) {
         res.status(500).json({ error: 'Failed to create itinerary' });
     }
 };
+*/
 
 // 특정 여행일정 조회
+exports.getItineraryById = async (req, res) => {
+    try {
+        console.log('🛠️ Retrieving itinerary by ID:', req.params.itinerary_id);
+        const itinerary = await Itinerary.findByPk(req.params.itinerary_id);
+        if (itinerary) {
+            res.status(200).json(itinerary);
+        } else {
+            res.status(404).json({ error: 'Itinerary not found' });
+        }
+    } catch (error) {
+        console.error('❌ Error retrieving itinerary by ID:', error.message);
+        res.status(500).json({ error: 'Failed to retrieve itinerary' });
+    }
+};
+/*
 exports.getItineraryById = async (req, res) => {
     try {
         const itinerary = await Itinerary.findByPk(req.params.itinerary_id);
@@ -151,6 +220,7 @@ exports.getItineraryById = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve itinerary' });
     }
 };
+*/
 
 // 특정 여행일정 수정
 exports.updateItinerary = async (req, res) => {
