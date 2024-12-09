@@ -7,8 +7,7 @@ exports.getItineraries = async (req, res) => {
         console.log('🛠️ Decoded Token:', res.locals.decoded); // 토큰 확인
         //const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
         // (1206) 로그인한 사용자의 ID
-        const user_id = res.locals.decoded?.id;
-
+        const user_id = res.locals.decoded?.user_id; // 수정: id -> user_id
         console.log('🛠️ User ID:', user_id); // 확인용 로그
 
         // user_id가 없으면 Unauthorized 응답
@@ -152,7 +151,8 @@ exports.createItinerary = async (req, res) => {
         const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
 
         // JWT 인증 확인
-        if (!req.user || !req.user.id) {
+        const user_id = res.locals.decoded?.user_id; // 수정: req.user.id -> res.locals.decoded.user_id
+        if (!user_id) {
             return res.status(401).json({ error: "Unauthorized access" });
         }
 
@@ -162,7 +162,7 @@ exports.createItinerary = async (req, res) => {
         console.log('🛠️ Creating itinerary:', req.body);
 
         const itinerary = await Itinerary.create({
-            user_id: req.user.id, // JWT 토큰으로부터 가져오는 사용자 ID
+            user_id, // JWT 토큰으로부터 가져오는 사용자 ID
             title,
             startdate,
             enddate,
