@@ -52,6 +52,9 @@ exports.verifyToken = (req, res, next) => {
 
       res.locals.decoded = decoded;
 
+      // 디코드된 토큰 로그 추가
+      console.log('🛠️ Decoded Token:', decoded);
+
       return next(); 
   } catch (error) {
       if (error.name === 'TokenExpiredError') {
