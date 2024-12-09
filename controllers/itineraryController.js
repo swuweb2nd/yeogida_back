@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 // 전체 여행일정을 조회
 exports.getItineraries = async (req, res) => {
     try {
+        console.log('🛠️ Decoded Token:', res.locals.decoded); // 토큰 확인
         //const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
         // (1206) 로그인한 사용자의 ID
         const user_id = res.locals.decoded?.id;
