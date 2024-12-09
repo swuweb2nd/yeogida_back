@@ -4,26 +4,31 @@ const { Op } = require('sequelize');
 // 전체 여행일정을 조회
 exports.getItineraries = async (req, res) => {
     try {
-        const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
-        const filters = {};
+        //const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
+        // (1206) 로그인한 사용자의 ID
+        const user_id = res.locals.decoded?.id;
 
-        // user_id 유효성 검사
-        if (!user_id && type) {
-            return res.status(400).json({ error: "user_id is required for filtering by type" });
+        console.log('🛠️ User ID:', user_id); // 확인용 로그
+
+        // user_id가 없으면 Unauthorized 응답
+        if (!user_id) {
+            return res.status(401).json({ error: "Unauthorized: Missing user ID" });
         }
 
-        // 조건에 따른 필터링 설정
-        if (user_id) {
-            if (type === 'mine') {
-                filters.user_id = user_id;
-            } else if (type === 'shared') {
-                filters['$Sharer.friend_id2$'] = user_id;
-            } else {
-                filters[Op.or] = [
-                    { user_id },
-                    { '$Sharer.friend_id2$': user_id }
-                ];
-            }
+        const { public_private, destination, startdate, enddate, sort, type } = req.query;
+
+        // 필터링 조건 설정
+        const filters = {};
+
+        if (type === 'mine') {
+            filters.user_id = user_id; // 본인 일정
+        } else if (type === 'shared') {
+            filters['$Sharer.friend_id2$'] = user_id; // 공유된 일정
+        } else {
+            filters[Op.or] = [
+                { user_id }, // 본인 일정
+                { '$Sharer.friend_id2$': user_id } // 공유된 일정
+            ];
         }
 
         if (public_private !== undefined) {
