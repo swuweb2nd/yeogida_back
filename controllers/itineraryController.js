@@ -7,6 +7,83 @@ exports.getItineraries = async (req, res) => {
         const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
         const filters = {};
 
+        // user_id 유효성 검사
+        if (!user_id && type) {
+            return res.status(400).json({ error: "user_id is required for filtering by type" });
+        }
+
+        // 조건에 따른 필터링 설정
+        if (user_id) {
+            if (type === 'mine') {
+                filters.user_id = user_id;
+            } else if (type === 'shared') {
+                filters['$Sharer.friend_id2$'] = user_id;
+            } else {
+                filters[Op.or] = [
+                    { user_id },
+                    { '$Sharer.friend_id2$': user_id }
+                ];
+            }
+        }
+
+        if (public_private !== undefined) {
+            filters.public_private = public_private === 'true';
+        }
+
+        if (destination) {
+            filters.destination = destination;
+        }
+
+        if (startdate) {
+            filters.startdate = { [Op.gte]: startdate };
+        }
+
+        if (enddate) {
+            filters.enddate = { [Op.lte]: enddate };
+        }
+
+        let order = [];
+        switch (sort) {
+            case 'newest':
+                order = [['created_at', 'DESC']];
+                break;
+            case 'oldest':
+                order = [['created_at', 'ASC']];
+                break;
+            case 'destination':
+                order = [['destination', 'ASC']];
+                break;
+            case 'title':
+                order = [['title', 'ASC']];
+                break;
+            default:
+                order = [['created_at', 'DESC']];
+                break;
+        }
+
+        // 로그 추가
+        console.log('🛠️ Query filters:', filters);
+        console.log('🛠️ Query sort order:', order);
+
+        const itineraries = await Itinerary.findAll({
+            where: filters,
+            include: [{ model: Sharer, required: false }],
+            order: order,
+        });
+
+        res.status(200).json(itineraries);
+    } catch (error) {
+        console.error('❌ Error in getItineraries:', error.message);
+        res.status(500).json({ error: 'Failed to fetch itineraries' });
+    }
+};
+
+/*
+exports.getItineraries = async (req, res) => {
+    try {
+        const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
+        const filters = {};
+
         // 조건에 따른 필터링 설정
         if (user_id) {
             if (type === 'mine') {
@@ -61,8 +138,42 @@ exports.getItineraries = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve itineraries' });
     }
 };
+*/
 
 // 새로운 여행일정 생성
+exports.createItinerary = async (req, res) => {
+    try {
+        const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
+
+        // JWT 인증 확인
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
+
+        // 이미지 URL이 없다면 기본 이미지 사용
+        const finalThumbnail = thumbnail || process.env.DEFAULT_THUMBNAIL_URL || 'https://default-thumbnail-url.com';
+
+        console.log('🛠️ Creating itinerary:', req.body);
+
+        const itinerary = await Itinerary.create({
+            user_id: req.user.id, // JWT 토큰으로부터 가져오는 사용자 ID
+            title,
+            startdate,
+            enddate,
+            destination,
+            public_private,
+            description,
+            thumbnail: finalThumbnail,
+        });
+
+        res.status(201).json(itinerary);
+    } catch (error) {
+        console.error('❌ Failed to create itinerary:', error.message);
+        res.status(500).json({ error: `Failed to create itinerary: ${error.message}` });
+    }
+};
+
+/*
 exports.createItinerary = async (req, res) => {
     try {
         const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
@@ -89,6 +200,8 @@ exports.createItinerary = async (req, res) => {
         res.status(500).json({ error: `Failed to create itinerary: ${error.message}` });
     }
 };
+*/
+
 /*
 exports.createItinerary = async (req, res) => {
     try {
@@ -129,6 +242,28 @@ exports.createItinerary = async (req, res) => {
 // 특정 여행일정 조회
 exports.getItineraryById = async (req, res) => {
     try {
+        if (!req.params.itinerary_id) {
+            console.error('❌ Itinerary ID is missing in the request');
+            return res.status(400).json({ error: 'Itinerary ID is required' });
+        }
+
+        console.log('🛠️ Retrieving itinerary by ID:', req.params.itinerary_id);
+
+        const itinerary = await Itinerary.findByPk(req.params.itinerary_id);
+        if (itinerary) {
+            res.status(200).json(itinerary);
+        } else {
+            res.status(404).json({ error: 'Itinerary not found' });
+        }
+    } catch (error) {
+        console.error('❌ Error retrieving itinerary by ID:', error.message);
+        res.status(500).json({ error: 'Failed to retrieve itinerary' });
+    }
+};
+
+/*
+exports.getItineraryById = async (req, res) => {
+    try {
         console.log('🛠️ Retrieving itinerary by ID:', req.params.itinerary_id);
         const itinerary = await Itinerary.findByPk(req.params.itinerary_id);
         if (itinerary) {
@@ -141,6 +276,8 @@ exports.getItineraryById = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve itinerary' });
     }
 };
+*/
+
 /*
 exports.getItineraryById = async (req, res) => {
     try {
@@ -176,6 +313,21 @@ exports.deleteItinerary = async (req, res) => {
     try {
         const deleted = await Itinerary.destroy({ where: { itinerary_id: req.params.itinerary_id } });
         if (deleted) {
+            return res.status(200).json({ message: "Itinerary deleted", id: req.params.itinerary_id });
+        } else {
+            res.status(404).json({ error: 'Itinerary not found' });
+        }
+    } catch (error) {
+        console.error('❌ Error deleting itinerary:', error.message);
+        res.status(500).json({ error: 'Failed to delete itinerary' });
+    }
+};
+
+/*
+exports.deleteItinerary = async (req, res) => {
+    try {
+        const deleted = await Itinerary.destroy({ where: { itinerary_id: req.params.itinerary_id } });
+        if (deleted) {
             res.status(204).send();
         } else {
             res.status(404).json({ error: 'Itinerary not found' });
@@ -184,3 +336,4 @@ exports.deleteItinerary = async (req, res) => {
         res.status(500).json({ error: 'Failed to delete itinerary' });
     }
 };
+*/
