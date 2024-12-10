@@ -2,6 +2,70 @@ const { Itinerary, Sharer } = require('../models'); // Sequelize 모델 import
 const { Op } = require('sequelize');
 
 // 전체 여행일정을 조회
+exports.getItineraries = async (req, res) => {
+    try {
+        const { user_id } = req.body; // user_id는 body에서 받음
+        const { public_private, destination, startdate, enddate, sort, type } = req.query; // 나머지는 query에서 받음
+        const filters = {};
+
+        // user_id가 없으면 Unauthorized 응답
+        if (!user_id) {
+            return res.status(401).json({ error: "Unauthorized: Missing user ID" });
+        }
+
+        // 조건에 따른 필터링 설정
+        if (type === 'mine') {
+            filters.user_id = user_id; // 본인 일정
+        } else if (type === 'shared') {
+            filters['$Sharer.friend_id$'] = user_id; // 공유된 일정
+        } else {
+            filters[Op.or] = [
+                { user_id }, 
+                { '$Sharer.friend_id$': user_id }
+            ];
+        }
+
+        if (public_private !== undefined) {
+            filters.public_private = public_private === 'true';
+        }
+
+        if (destination) {
+            filters.destination = destination;
+        }
+
+        if (startdate) {
+            filters.startdate = { [Op.gte]: startdate };
+        }
+
+        if (enddate) {
+            filters.enddate = { [Op.lte]: enddate };
+        }
+
+        let order = [];
+        switch (sort) {
+            case 'newest':
+                order = [['created_at', 'DESC']];
+                break;
+            case 'oldest':
+                order = [['created_at', 'ASC']];
+                break;
+            default:
+                order = [['created_at', 'DESC']];
+                break;
+        }
+
+        const itineraries = await Itinerary.findAll({
+            where: filters,
+            include: [{ model: Sharer, required: false }],
+            order: order
+        });
+
+        res.status(200).json(itineraries);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve itineraries' });
+    }
+};
+
 /*
 exports.getItineraries = async (req, res) => {
     try {
@@ -84,7 +148,7 @@ exports.getItineraries = async (req, res) => {
     }
 };*/
 
-
+/*
 exports.getItineraries = async (req, res) => {
     try {
         const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
@@ -145,7 +209,7 @@ exports.getItineraries = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve itineraries' });
     }
 };
-
+*/
 
 // 새로운 여행일정 생성
 /*
