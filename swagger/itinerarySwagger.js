@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Itineraries
- *   description: 여행일정 관리 API
+ *   description: 나의 여행 여행일정 관리 API
  */
 
 /**
@@ -13,17 +13,23 @@
  *       - Itineraries
  *     summary: 전체, 조건별 여행일정을 조회합니다.
  *     description: 사용자가 접근할 수 있는 모든 여행일정을 조회합니다. 여기에는 사용자가 직접 만든 일정과 타인으로부터 공유받은 일정이 모두 포함됩니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 description: 사용자의 여행 일정 필터링에 필요한 고유 ID
+ *                 example: 2
  *     parameters:
- *       - in: query
- *         name: user_id
- *         schema:
- *           type: integer
- *         description: 특정 사용자가 만든 일정 또는 공유받은 일정을 필터링
  *       - in: query
  *         name: public_private
  *         schema:
  *           type: boolean
- *         description: 공개 여부에 따른 일정 필터링 (true = 공개, false = 비공개)
+ *         description: 공개 여부에 따른 일정 필터링 (true = 공개, false = 비공개, 미설정 시 모든 일정 반환)
  *       - in: query
  *         name: destination
  *         schema:
@@ -46,17 +52,17 @@
  *         schema:
  *           type: string
  *           enum: 
- *              -newest
- *              -oldest
+ *              - newest
+ *              - oldest
  *         description: "정렬 기준 newest: 최신순, oldest: 오래된 순"
  *       - in: query
  *         name: type
  *         schema:
  *           type: string
  *           enum: 
- *              -mine
- *              -shared
- *         description: "일정 유형 mine: 내가 만든 일정, shared: 공유받은 일정)"
+ *              - mine
+ *              - shared
+ *         description: "일정 유형 mine: 내가 만든 일정, shared: 공유받은 일정"
  *     responses:
  *       200:
  *         description: 성공
@@ -66,6 +72,16 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Itinerary'
+ *       401:
+ *         description: 인증 실패
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized: Missing user ID
  *       500:
  *         description: 서버 오류
  *         content:
@@ -77,7 +93,6 @@
  *                   type: string
  *                   example: Failed to retrieve itineraries
  */
-
 
 
 /**
