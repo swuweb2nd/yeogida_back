@@ -93,7 +93,7 @@ exports.getItineraries = async (req, res) => {
         // 조건에 따른 필터링 설정
         if (user_id) {
             if (type === 'mine') {
-                filters.user_id = user_id;
+                filters.user_id = Number(user_id);
             } else if (type === 'shared') {
                 filters['$Sharer.friend_id2$'] = user_id;
             } else {
@@ -141,6 +141,7 @@ exports.getItineraries = async (req, res) => {
 
         res.status(200).json(itineraries);
     } catch (error) {
+        console.error('❌ Error in getItineraries:', error.message);
         res.status(500).json({ error: 'Failed to retrieve itineraries' });
     }
 };
