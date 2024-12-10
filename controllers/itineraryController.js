@@ -4,27 +4,23 @@ const { Op } = require('sequelize');
 // 전체 여행일정을 조회
 exports.getItineraries = async (req, res) => {
     try {
-        const { user_id } = req.body; // user_id는 body에서 받음
-        const { public_private, destination, startdate, enddate, sort, type } = req.query; // 나머지는 query에서 받음
+        const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query; // 쿼리 파라미터에서 user_id 가져옴
         const filters = {};
 
-        // user_id가 없으면 Unauthorized 응답
+        // user_id가 없는 경우 Unauthorized 반환
         if (!user_id) {
             return res.status(401).json({ error: "Unauthorized: Missing user ID" });
         }
 
         // 조건에 따른 필터링 설정
         if (type === 'mine') {
-            // 'mine'은 내가 만든 여행만 조회
-            filters.user_id = user_id;
+            filters.user_id = user_id; // 내가 만든 여행
         } else if (type === 'shared') {
-            // 'shared'는 친구가 나에게 공유한 여행만 조회
-            filters['$Sharer.friend_id$'] = user_id; // Sharer 테이블을 통해 내가 친구에게 공유받은 여행 조회
+            filters['$Sharer.friend_id$'] = user_id; // 공유받은 여행
         } else {
-            // 기본적으로 'mine'과 'shared'를 모두 포함하는 조건
             filters[Op.or] = [
                 { user_id }, // 내가 만든 여행
-                { '$Sharer.friend_id$': user_id } // 내가 친구에게 공유받은 여행
+                { '$Sharer.friend_id$': user_id } // 공유받은 여행
             ];
         }
 
@@ -44,20 +40,9 @@ exports.getItineraries = async (req, res) => {
             filters.enddate = { [Op.lte]: enddate };
         }
 
-        let order = [];
-        switch (sort) {
-            case 'newest':
-                order = [['created_at', 'DESC']];
-                break;
-            case 'oldest':
-                order = [['created_at', 'ASC']];
-                break;
-            default:
-                order = [['created_at', 'DESC']];
-                break;
-        }
+        const order = sort === 'oldest' ? [['created_at', 'ASC']] : [['created_at', 'DESC']];
 
-        // Itinerary와 Sharer 테이블을 포함하여 결과 가져오기
+        // 여행일정 데이터 가져오기
         const itineraries = await Itinerary.findAll({
             where: filters,
             include: [{ model: Sharer, required: false }],
@@ -70,6 +55,7 @@ exports.getItineraries = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve itineraries' });
     }
 };
+
 
 
 /*
