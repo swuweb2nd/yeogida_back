@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Itineraries
- *   description: 나의 여행 여행일정 관리 API
+ *   description: 여행일정 관리 API
  */
 
 /**
@@ -18,51 +18,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               user_id:
- *                 type: integer
- *                 description: 사용자의 여행 일정 필터링에 필요한 고유 ID
- *                 example: 2
- *     parameters:
- *       - in: query
- *         name: public_private
- *         schema:
- *           type: boolean
- *         description: 공개 여부에 따른 일정 필터링 (true = 공개, false = 비공개, 미설정 시 모든 일정 반환)
- *       - in: query
- *         name: destination
- *         schema:
- *           type: string
- *         description: 특정 목적지로 필터링
- *       - in: query
- *         name: startdate
- *         schema:
- *           type: string
- *           format: date
- *         description: 시작 날짜로 필터링 (YYYY-MM-DD)
- *       - in: query
- *         name: enddate
- *         schema:
- *           type: string
- *           format: date
- *         description: 종료 날짜로 필터링 (YYYY-MM-DD)
- *       - in: query
- *         name: sort
- *         schema:
- *           type: string
- *           enum: 
- *              - newest
- *              - oldest
- *         description: "정렬 기준 newest: 최신순, oldest: 오래된 순"
- *       - in: query
- *         name: type
- *         schema:
- *           type: string
- *           enum: 
- *              - mine
- *              - shared
- *         description: "일정 유형 mine: 내가 만든 일정, shared: 공유받은 일정"
+ *             $ref: '#/components/schemas/GetItinerariesRequest'
  *     responses:
  *       200:
  *         description: 성공
@@ -93,7 +49,6 @@
  *                   type: string
  *                   example: Failed to retrieve itineraries
  */
-
 
 /**
  * @swagger
