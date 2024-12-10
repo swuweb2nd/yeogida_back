@@ -15,13 +15,16 @@ exports.getItineraries = async (req, res) => {
 
         // 조건에 따른 필터링 설정
         if (type === 'mine') {
-            filters.user_id = user_id; // 본인 일정
+            // 'mine'은 내가 만든 여행만 조회
+            filters.user_id = user_id;
         } else if (type === 'shared') {
-            filters['$Sharer.friend_id$'] = user_id; // 공유된 일정
+            // 'shared'는 친구가 나에게 공유한 여행만 조회
+            filters['$Sharer.friend_id$'] = user_id; // Sharer 테이블을 통해 내가 친구에게 공유받은 여행 조회
         } else {
+            // 기본적으로 'mine'과 'shared'를 모두 포함하는 조건
             filters[Op.or] = [
-                { user_id }, 
-                { '$Sharer.friend_id$': user_id }
+                { user_id }, // 내가 만든 여행
+                { '$Sharer.friend_id$': user_id } // 내가 친구에게 공유받은 여행
             ];
         }
 
@@ -54,6 +57,7 @@ exports.getItineraries = async (req, res) => {
                 break;
         }
 
+        // Itinerary와 Sharer 테이블을 포함하여 결과 가져오기
         const itineraries = await Itinerary.findAll({
             where: filters,
             include: [{ model: Sharer, required: false }],
@@ -62,9 +66,11 @@ exports.getItineraries = async (req, res) => {
 
         res.status(200).json(itineraries);
     } catch (error) {
+        console.error('❌ Error in getItineraries:', error.message);
         res.status(500).json({ error: 'Failed to retrieve itineraries' });
     }
 };
+
 
 /*
 exports.getItineraries = async (req, res) => {
