@@ -2,6 +2,7 @@ const { Itinerary, Sharer } = require('../models'); // Sequelize 모델 import
 const { Op } = require('sequelize');
 
 // 전체 여행일정을 조회
+/*
 exports.getItineraries = async (req, res) => {
     try {
         console.log('🛠️ Decoded Token:', res.locals.decoded); // 토큰 확인
@@ -81,9 +82,9 @@ exports.getItineraries = async (req, res) => {
         console.error('❌ Error in getItineraries:', error.message);
         res.status(500).json({ error: 'Failed to fetch itineraries' });
     }
-};
+};*/
 
-/*
+
 exports.getItineraries = async (req, res) => {
     try {
         const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query;
@@ -143,9 +144,10 @@ exports.getItineraries = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve itineraries' });
     }
 };
-*/
+
 
 // 새로운 여행일정 생성
+/*
 exports.createItinerary = async (req, res) => {
     try {
         const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
@@ -178,8 +180,9 @@ exports.createItinerary = async (req, res) => {
         res.status(500).json({ error: `Failed to create itinerary: ${error.message}` });
     }
 };
+*/
 
-/*
+
 exports.createItinerary = async (req, res) => {
     try {
         const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
@@ -206,7 +209,7 @@ exports.createItinerary = async (req, res) => {
         res.status(500).json({ error: `Failed to create itinerary: ${error.message}` });
     }
 };
-*/
+
 
 /*
 exports.createItinerary = async (req, res) => {
