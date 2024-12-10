@@ -131,7 +131,52 @@ const options = {
                             example: "2024-07-10T12:00:00Z"
                         }
                     },
-                    required: ["user_id", "title", "startdate", "enddate", "destination", "public_private"]
+                    required: ["title", "startdate", "enddate", "destination", "public_private"]
+                },
+                GetItinerariesRequest: {
+                    type: "object",
+                    properties: {
+                        user_id: {
+                            type: "integer",
+                            description: "사용자 ID",
+                            example: 10
+                        },
+                        public_private: {
+                            type: "boolean",
+                            description: "공개 여부 (true=공개, false=비공개)",
+                            example: true
+                        },
+                        destination: {
+                            type: "string",
+                            description: "여행 목적지",
+                            example: "프랑스"
+                        },
+                        startdate: {
+                            type: "string",
+                            format: "date",
+                            description: "여행 시작 날짜 (YYYY-MM-DD)",
+                            example: "2024-08-01"
+                        },
+                        enddate: {
+                            type: "string",
+                            format: "date",
+                            description: "여행 종료 날짜 (YYYY-MM-DD)",
+                            example: "2024-08-15"
+                        },
+                        sort: {
+                            type: "string",
+                            description: "정렬 기준 (newest: 최신순, oldest: 오래된 순)",
+                            enum: ["newest", "oldest"],
+                            example: "newest"
+                        },
+                        type: {
+                            type: "string",
+                            description: "일정 유형 (mine: 내가 만든 일정, shared: 공유받은 일정)",
+                            enum: ["mine", "shared"],
+                            example: "mine"
+                        }
+                    },
+                    required: ["user_id"]
                 }
             }
         }
