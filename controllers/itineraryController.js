@@ -11,7 +11,10 @@ exports.getItineraries = async (req, res) => {
         if (!user_id) {
             return res.status(401).json({ error: "Unauthorized: Missing user ID" });
         }
-
+        // 기본 조건: user_id만 사용-test
+        filters.user_id = user_id; // 내가 만든 여행만 조회
+        
+        /*
         // 조건에 따른 필터링 설정
         if (type === 'mine') {
             filters.user_id = user_id; // 내가 만든 여행
@@ -23,6 +26,7 @@ exports.getItineraries = async (req, res) => {
                 { '$Sharer.friend_id$': user_id } // 공유받은 여행
             ];
         }
+            */
 
         if (public_private !== undefined) {
             filters.public_private = public_private === 'true';
