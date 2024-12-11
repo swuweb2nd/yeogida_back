@@ -13,7 +13,7 @@ exports.getItineraries = async (req, res) => {
         }
         // 기본 조건: user_id만 사용-test
         filters.user_id = user_id; // 내가 만든 여행만 조회
-        
+
         /*
         // 조건에 따른 필터링 설정
         if (type === 'mine') {
@@ -46,12 +46,20 @@ exports.getItineraries = async (req, res) => {
 
         const order = sort === 'oldest' ? [['created_at', 'ASC']] : [['created_at', 'DESC']];
 
+        /*
         // 여행일정 데이터 가져오기
         const itineraries = await Itinerary.findAll({
             where: filters,
             include: [{ model: Sharer, required: false }],
             order: order
+        });*/
+
+        //혹시 Sharer 연결하는게 문제인가..?
+        const itineraries = await Itinerary.findAll({
+            where: { user_id },
+            order: [['created_at', 'DESC']],
         });
+        
 
         res.status(200).json(itineraries);
     } catch (error) {
