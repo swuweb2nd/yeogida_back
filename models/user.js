@@ -77,9 +77,7 @@ class User extends Sequelize.Model {
   //다른 모델(테이블)과 관계 정의 부분 (양방향, 1:N 포함)
   static associate(db) {
     //회원정보 - 여행일정
-    //db.User.hasMany(db.Itinerary, { foreignKey: 'iternary_id', sourceKey: 'user_id' });
-    //db.User.hasMany(db.Itinerary, { foreignKey: 'user_id', sourceKey: 'user_id' }); //12/12 test 은수
-
+    db.User.hasMany(db.Itinerary, { foreignKey: 'iternary_id', sourceKey: 'user_id' });
 
     //회원정보 - 스크랩폴더 
     db.User.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'user_id' });
