@@ -78,7 +78,7 @@ class User extends Sequelize.Model {
   static associate(db) {
     //회원정보 - 여행일정
     //db.User.hasMany(db.Itinerary, { foreignKey: 'iternary_id', sourceKey: 'user_id' });
-    db.User.hasMany(db.Itinerary, { foreignKey: 'user_id', sourceKey: 'user_id' }); //12/12 test 은수
+    //db.User.hasMany(db.Itinerary, { foreignKey: 'user_id', sourceKey: 'user_id' }); //12/12 test 은수
 
 
     //회원정보 - 스크랩폴더 
