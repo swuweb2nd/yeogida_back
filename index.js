@@ -1,6 +1,11 @@
 const express = require("express");
 require("dotenv").config();
 
+// console.log 재정의
+console.log = function (...args) {
+  process.stdout.write(args.join(' ') + '\n');
+};
+
 const { sequelize } = require("./models");
 
 // Passport 설정

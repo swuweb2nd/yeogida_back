@@ -13,12 +13,60 @@
  *       - Itineraries
  *     summary: 전체, 조건별 여행일정을 조회합니다.
  *     description: 사용자가 접근할 수 있는 모든 여행일정을 조회합니다. 여기에는 사용자가 직접 만든 일정과 타인으로부터 공유받은 일정이 모두 포함됩니다.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/GetItinerariesRequest'
+ *     security:
+ *       - BearerAuth: []  # Bearer 토큰 인증 추가
+ *     parameters:
+ *       - name: user_id
+ *         in: query
+ *         description: 사용자 ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 2
+ *       - name: public_private
+ *         in: query
+ *         description: 공개 여부 (true/false)
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *           example: true
+ *       - name: destination
+ *         in: query
+ *         description: 여행 목적지
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: "서울"
+ *       - name: startdate
+ *         in: query
+ *         description: 여행 시작 날짜 (YYYY-MM-DD)
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2024-12-01"
+ *       - name: enddate
+ *         in: query
+ *         description: 여행 종료 날짜 (YYYY-MM-DD)
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2024-12-10"
+ *       - name: sort
+ *         in: query
+ *         description: 정렬 기준 (newest/oldest)
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: "newest"
+ *       - name: type
+ *         in: query
+ *         description: 일정 유형 (mine/shared)
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: "mine"
  *     responses:
  *       200:
  *         description: 성공
@@ -49,6 +97,7 @@
  *                   type: string
  *                   example: Failed to retrieve itineraries
  */
+
 
 /**
  * @swagger
