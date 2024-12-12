@@ -77,12 +77,10 @@ class User extends Sequelize.Model {
   //다른 모델(테이블)과 관계 정의 부분 (양방향, 1:N 포함)
   static associate(db) {
     //회원정보 - 여행일정
-    //db.User.hasMany(db.Itinerary, { foreignKey: 'iternary_id', sourceKey: 'user_id' });
-    //db.User.hasMany(db.Itinerary, { foreignKey: 'user_id', sourceKey: 'user_id' }); //12/12 test 은수
-
+    db.User.hasMany(db.Itinerary, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
     //회원정보 - 스크랩폴더 
-    db.User.hasMany(db.Scrap, { foreignKey: 'scrapfolder_id', sourceKey: 'user_id' });
+    db.User.hasMany(db.Scrap, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
     //회원정보 - 친구목록 (양방향 관계 설정, as로 보낸요청/받은요청 구분)
     db.User.hasMany(db.FriendList, { foreignKey: 'from_user_id', sourceKey: 'user_id', as: 'SentRequests' });
@@ -90,10 +88,10 @@ class User extends Sequelize.Model {
     
     
     //회원정보 - 알림
-    db.User.hasMany(db.Alarm, { foreignKey: 'alarm_id', sourceKey: 'user_id' });
+    db.User.hasMany(db.Alarm, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
     //회원정보 - 댓글
-    db.User.hasMany(db.Comment, { foreignKey: 'comment_id', sourceKey: 'user_id' });
+    db.User.hasMany(db.Comment, { foreignKey: 'user_id', sourceKey: 'user_id' });
 
     }
 
