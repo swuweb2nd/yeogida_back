@@ -2,7 +2,6 @@ const { Itinerary, Sharer } = require('../models'); // Sequelize 모델 import
 const { Op } = require('sequelize');
 
 // 전체 여행일정을 조회
-
 exports.getItineraries = async (req, res) => {
     try {
         const { user_id, public_private, destination, startdate, enddate, sort, type } = req.query; // 쿼리 파라미터에서 user_id 가져옴
@@ -10,12 +9,10 @@ exports.getItineraries = async (req, res) => {
 
         // user_id가 없는 경우 Unauthorized 반환
         if (!user_id) {
+            console.error("❌ Missing user_id in request query.");
             return res.status(401).json({ error: "Unauthorized: Missing user ID" });
         }
-        // 기본 조건: user_id만 사용-test
-        filters.user_id = user_id; // 내가 만든 여행만 조회
 
-        /*
         // 조건에 따른 필터링 설정
         if (type === 'mine') {
             filters.user_id = user_id; // 내가 만든 여행
@@ -26,7 +23,7 @@ exports.getItineraries = async (req, res) => {
                 { user_id }, // 내가 만든 여행
                 { '$Sharer.friend_id$': user_id } // 공유받은 여행
             ];
-        }*/
+        }
 
         if (public_private !== undefined) {
             filters.public_private = public_private === 'true';
@@ -46,20 +43,15 @@ exports.getItineraries = async (req, res) => {
 
         const order = sort === 'oldest' ? [['created_at', 'ASC']] : [['created_at', 'DESC']];
 
-        /*
+        // 디버깅용 로그 추가
+        console.log('🛠️ Generated filters:', filters);
+
         // 여행일정 데이터 가져오기
         const itineraries = await Itinerary.findAll({
             where: filters,
             include: [{ model: Sharer, required: false }],
             order: order
-        });*/
-
-        //혹시 Sharer 연결하는게 문제인가..?
-        const itineraries = await Itinerary.findAll({
-            where: { user_id },
-            order: [['created_at', 'DESC']],
         });
-        
 
         res.status(200).json(itineraries);
     } catch (error) {
