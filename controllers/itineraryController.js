@@ -17,11 +17,11 @@ exports.getItineraries = async (req, res) => {
         if (type === 'mine') {
             filters.user_id = user_id; // 내가 만든 여행
         } else if (type === 'shared') {
-            filters['$Sharer.friend_id$'] = user_id; // 공유받은 여행
+            filters['$Sharers.friend_id$'] = user_id; // 공유받은 여행
         } else {
             filters[Op.or] = [
                 { user_id }, // 내가 만든 여행
-                { '$Sharer.friend_id$': user_id } // 공유받은 여행
+                { '$Sharers.friend_id$': user_id } // 공유받은 여행
             ];
         }
 
@@ -49,7 +49,7 @@ exports.getItineraries = async (req, res) => {
         // 여행일정 데이터 가져오기
         const itineraries = await Itinerary.findAll({
             where: filters,
-            include: [{ model: Sharer, required: false }],
+            include: [{ model: Sharer, as: 'Sharers', required: false }],
             order: order
         });
 
