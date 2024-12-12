@@ -256,30 +256,32 @@ exports.createItinerary = async (req, res) => {
 
 exports.createItinerary = async (req, res) => {
     try {
-        const { title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
+        const { user_id, title, startdate, enddate, destination, public_private, description, thumbnail } = req.body;
 
         // 이미지 URL이 없다면 기본 이미지 사용
         const finalThumbnail = thumbnail || 'https://example.com/default-thumbnail.jpg'; // 기본 이미지 URL
 
         console.log('🛠️ Creating itinerary:', req.body);
 
+        // Itinerary 생성
         const itinerary = await Itinerary.create({
-            user_id: req.user.id, // JWT 토큰으로부터 가져오는 사용자 ID
+            user_id, // req.body에서 직접 가져온 사용자 ID
             title,
             startdate,
             enddate,
             destination,
             public_private,
             description,
-            thumbnail: finalThumbnail, // 이미지 URL을 저장
+            thumbnail: finalThumbnail, // 이미지 URL 저장
         });
 
-        res.status(201).json(itinerary);
+        res.status(201).json(itinerary); // 성공 응답 반환
     } catch (error) {
         console.error('❌ Failed to create itinerary:', error.message);
         res.status(500).json({ error: `Failed to create itinerary: ${error.message}` });
     }
 };
+
 
 
 /*
