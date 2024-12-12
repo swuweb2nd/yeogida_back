@@ -3,7 +3,6 @@ const router = express.Router();
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const AWS = require('aws-sdk');
-const imageRoutes = require('./routes/imageRoutes'); // routes 폴더 내의 imageRoutes.js 불러오기
 
 // S3 설정
 const s3 = new AWS.S3({
