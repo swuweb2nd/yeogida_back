@@ -85,7 +85,7 @@
  *               properties:
  *                 error:
  *                   type: string
- *                   example: Unauthorized: Missing user ID
+ *                   example: "Unauthorized: Missing user ID"
  *       500:
  *         description: 서버 오류
  *         content:
