@@ -56,17 +56,9 @@ exports.getItineraries = async (req, res) => {
         res.status(200).json(itineraries);
     } catch (error) {
         console.error('❌ Error in getItineraries:', error.message, {
-            filters,
-            user_id: req.query.user_id,
         });
         res.status(500).json({ 
             error: 'Failed to retrieve itineraries',
-            debug: {
-                message: error.message,
-                stack: error.stack,
-                filters: filters || {}, // 디버깅용 필터
-                user_id: req.query.user_id || 'Not provided', // 요청된 user_id
-            },
         });
     }
 };
