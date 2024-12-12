@@ -76,7 +76,7 @@ exports.createPlace = async (req, res) => {
         res.status(500).json({ error: 'Failed to create place' });
     }
 };
-/*
+
 exports.getPlacesByItineraryId = async (req, res) => {
     try {
         const places = await Place.findAll({ where: { itinerary_id: req.params.itinerary_id } });
@@ -89,7 +89,6 @@ exports.getPlacesByItineraryId = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve places' });
     }
 };
-*/
 
 /*
 // 특정 여행일정에 새로운 여행장소 추가
