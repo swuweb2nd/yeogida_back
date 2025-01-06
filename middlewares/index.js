@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-
 /*
 // 로그인 상태 관련 미들웨어(1106수정)
 exports.isLoggedIn = (req, res, next) => {
@@ -37,35 +36,53 @@ exports.isNotLoggedIn = (req, res, next) => {
   }
 };
 */
+const jwt = require("jsonwebtoken");
 
 exports.verifyToken = (req, res, next) => {
   try {
-      const authHeader = req.headers['authorization'];
+    const authHeader = req.headers["authorization"];
 
-      //헤더가 Bearer 형식인지 검증 
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({ message: '유효하지 않은 인증 헤더입니다.' });
-      }
+    // 1. Authorization 헤더가 존재하지 않을 때 처리
+    if (!authHeader) {
+      console.error("Authorization 헤더가 없습니다.");
+      return res
+        .status(403)
+        .json({ message: "유효하지 않은 인증 헤더입니다." });
+    }
 
-      const token = authHeader.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // 2. Bearer 토큰 형식인지 확인
+    if (!authHeader.startsWith("Bearer ")) {
+      console.error("Authorization 헤더가 Bearer 형식이 아닙니다.");
+      return res
+        .status(403)
+        .json({ message: "유효하지 않은 인증 헤더입니다." });
+    }
 
-      res.locals.decoded = decoded;
+    // 3. 토큰 추출
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // 토큰 검증
 
-      // 디코드된 토큰 로그 추가
-      console.log('🛠️ Decoded Token:', decoded);
+    // 4. 디코드된 토큰 로그 추가
+    console.log("🛠️ Decoded Token:", decoded);
 
-      return next(); 
+    // 5. 검증된 토큰 정보를 res.locals에 저장
+    res.locals.decoded = decoded;
+
+    return next(); // 다음 미들웨어로 이동
   } catch (error) {
-      if (error.name === 'TokenExpiredError') {
-          return res.status(419).json({
-              code: 419,
-              message: '토큰이 만료되었습니다',
-          });
-      }
-      return res.status(401).json({
-          code: 401,
-          message: '유효하지 않은 토큰입니다',
+    // 6. 토큰 만료 또는 유효하지 않은 토큰 처리
+    if (error.name === "TokenExpiredError") {
+      console.error("토큰이 만료되었습니다.");
+      return res.status(419).json({
+        code: 419,
+        message: "토큰이 만료되었습니다.",
       });
+    }
+
+    console.error("유효하지 않은 토큰입니다:", error);
+    return res.status(401).json({
+      code: 401,
+      message: "유효하지 않은 토큰입니다.",
+    });
   }
 };
